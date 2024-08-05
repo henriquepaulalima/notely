@@ -1,0 +1,12 @@
+<header class="header__container">
+  <button
+    (click)="this.toggleMenu()"
+    [ngStyle]="{
+      'background-image': 'url(/assets/images/icons/' + this.iconUrl + ')'
+    }"
+  ></button>
+  <div [class.showMenu]="this.showMenu" class="header__dropdown" #dropdown>
+    <button (click)="navigateTo('/create');">Create</button>
+    <button (click)="navigateTo('/manage');">Manage</button>
+  </div>
+</header>
