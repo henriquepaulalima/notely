@@ -1,0 +1,81 @@
+<main class="create__container">
+  <app-header></app-header>
+  <div class="create__page_header">
+    <h1>Create new</h1>
+    <div class="create__toggle">
+      <input
+        [formControl]="createTypeIsTag"
+        type="checkbox"
+        id="create_type_toggle"
+      />
+      <label for="create_type_toggle">
+        <div>Note</div>
+        <div>Tag</div>
+      </label>
+    </div>
+    <form
+      *ngIf="createTypeIsTag.value === false"
+      (ngSubmit)="submitNoteForm()"
+      [formGroup]="noteForm"
+      class="create__note_form"
+      id="note_form"
+    >
+      <div class="create__note_input_control">
+        <input
+          formControlName="title"
+          type="text"
+          name="noteTitle"
+          id="noteTitle"
+          placeholder=""
+        />
+        <label for="noteTitle">Title</label>
+        <small *ngIf="title?.invalid && (title?.dirty || title?.touched)">
+          <ng-container *ngIf="title?.hasError('required')"
+            >A note's title is required</ng-container
+          >
+          <ng-container *ngIf="title?.hasError('minlength')"
+            >The note's title must have at least 3 characters</ng-container
+          >
+          <ng-container *ngIf="title?.hasError('maxlength')"
+            >The note's title must have a maximum of 20 characters</ng-container
+          >
+        </small>
+      </div>
+      <div class="create__note_input_control">
+        <textarea
+          formControlName="content"
+          name="noteContent"
+          id="noteContent"
+          placeholder=""
+          appTextareaAutoresize
+        ></textarea>
+        <label for="noteContent">Content</label>
+        <small *ngIf="content?.invalid && (content?.dirty || content?.touched)">
+          <ng-container *ngIf="content?.hasError('required')"
+            >A note's content is required</ng-container
+          >
+          <ng-container *ngIf="content?.hasError('minlength')"
+            >The note's content must have at least 3 characters</ng-container
+          >
+        </small>
+      </div>
+      <div class="create__note_tags_container">
+        <h2>Add to tag</h2>
+        <div class="create__note_tag_list">
+          <span
+            *ngFor="let item of this.tagsMock"
+            (click)="toggleTagToNote(item.id)"
+            class="create__note_tag"
+            [ngStyle]="{ 'background-color': getTagColor(item.color)}"
+            [class.create__note_tag_active]="noteTagsXref.includes(item)"
+          >
+            {{ item.name }}
+          </span>
+        </div>
+      </div>
+      <button type="submit" form="note_form" [disabled]="noteForm.invalid" class="create__submit_btn">
+        Create
+      </button>
+    </form>
+  </div>
+</main>
