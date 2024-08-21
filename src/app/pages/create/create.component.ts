@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -6,9 +6,10 @@ import {
   Validators,
 } from '@angular/forms';
 import { INote } from 'src/app/utils/interfaces/inote';
-import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
+import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
 import { GetTagColorService } from 'src/app/utils/services/get-tag-color.service';
 import { NoteService } from 'src/app/utils/services/note.service';
+import { TagService } from 'src/app/utils/services/tag.service';
 import { v4 as uuidv4 } from 'uuid';
 
 @Component({
@@ -17,8 +18,14 @@ import { v4 as uuidv4 } from 'uuid';
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit {
-  public createTypeIsTag: FormControl<boolean | null> = new FormControl(false);
+
+  @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
+  @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
+
+  public createTypeIsTag: FormControl<boolean | null> = new FormControl(true);
   public noteForm!: FormGroup;
+  public tagForm!: FormGroup;
+  public tagColors!: ITagColor[];
   public tagsMock: ITag[] = [
     {
       id: uuidv4(),
@@ -46,11 +53,20 @@ export class CreateComponent implements OnInit {
     },
   ];
   public noteTagsXref: ITag[] = [];
+  public showColorPIckerModal: boolean = false;
 
   constructor(
     private tagColorService: GetTagColorService,
-    private noteService: NoteService
-  ) {}
+    private noteService: NoteService,
+    private tagService: TagService,
+    private renderer: Renderer2
+  ) {
+    this.renderer.listen('window', 'click', (event: Event) => {
+      if (event.target === this.modalOverlayEl?.nativeElement) {
+        this.toggleColorPickerModal();
+      }
+    })
+  }
 
   ngOnInit(): void {
     this.noteForm = new FormGroup({
@@ -64,6 +80,19 @@ export class CreateComponent implements OnInit {
         Validators.minLength(3),
       ]),
     });
+
+    this.tagForm = new FormGroup({
+      name: new FormControl<string>('', [
+        Validators.required,
+        Validators.minLength(3),
+        Validators.maxLength(20),
+      ]),
+      color: new FormControl<TagColors>(TagColors.MEDIUM_GREEN, [
+        Validators.required,
+      ]),
+    });
+
+    this.tagColors = this.tagColorService.getAll();
   }
 
   get title(): AbstractControl<any, any> | null | undefined {
@@ -72,6 +101,14 @@ export class CreateComponent implements OnInit {
 
   get content(): AbstractControl<any, any> | null | undefined {
     return this.noteForm.get('content');
+  }
+
+  get name(): AbstractControl<any, any> | null | undefined {
+    return this.tagForm.get('name');
+  }
+
+  get color(): AbstractControl<any, any> | null | undefined {
+    return this.tagForm.get('color');
   }
 
   public toggleTagToNote(tagId: string): void {
@@ -90,16 +127,16 @@ export class CreateComponent implements OnInit {
   }
 
   public getTagColor(tagColor: TagColors): string {
-    return this.tagColorService.get(tagColor);
+    return this.tagColorService.getSingle(tagColor);
   }
 
   public submitNoteForm(): void {
-    if (this.noteForm.invalid) throw new Error("Note's form is invalid");
+    if (this.noteForm.invalid) throw new Error('Note\'s form is invalid');
 
     const newNoteData: INote = {
       id: uuidv4(),
-      title: this.noteForm.value.title,
-      content: this.noteForm.value.content,
+      title: this.title?.value,
+      content: this.content?.value,
       tags: this.noteTagsXref,
       active: true,
       createdAt: new Date(),
@@ -108,14 +145,56 @@ export class CreateComponent implements OnInit {
 
     try {
       this.noteService.createNote(newNoteData);
-      this.clearForm();
+      this.clearForm(this.noteForm);
     } catch (error) {
       console.error(error);
     }
   }
 
-  public clearForm(): void {
-    this.noteForm.reset();
-    this.noteTagsXref = [];
+  public submitTagForm(): void {
+    if (this.tagForm.invalid) throw new Error('Tag\'s form is invalid');
+
+    const newTagData: ITag = {
+      id: uuidv4(),
+      name: this.name?.value,
+      color: this.color?.value,
+      active: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+
+    try {
+      this.tagService.createTag(newTagData);
+      this.clearForm(this.tagForm);
+    } catch(error) {
+      console.error(error);
+    }
+  }
+
+  public clearForm(form: FormGroup<any>): void {
+    form.reset();
+
+    if (form === this.noteForm) this.noteTagsXref = [];
+    if (form === this.tagForm) this.color?.setValue(TagColors.MEDIUM_GREEN);
+  }
+
+  public toggleColorPickerModal(): void {
+    if (this.showColorPIckerModal) {
+      this.modalBlockEl.nativeElement.classList.add('close');
+      setTimeout(() => {
+        this.showColorPIckerModal = !this.showColorPIckerModal;
+      }, 500);
+    } else {
+      this.showColorPIckerModal = !this.showColorPIckerModal;
+    }
+  }
+
+  public pickColor(colorElement: ITagColor): void {
+    const element = document.getElementById(colorElement.name);
+    this.color?.setValue(colorElement.id);
+    element?.focus();
+    setTimeout(() => {
+      this.toggleColorPickerModal();
+    }, 250);
   }
 }

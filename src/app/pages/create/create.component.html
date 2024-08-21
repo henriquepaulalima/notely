@@ -14,13 +14,13 @@
       </label>
     </div>
     <form
-      *ngIf="createTypeIsTag.value === false"
+      *ngIf="!createTypeIsTag.value"
       (ngSubmit)="submitNoteForm()"
       [formGroup]="noteForm"
-      class="create__note_form"
+      class="create_form__container"
       id="note_form"
     >
-      <div class="create__note_input_control">
+      <div class="create_form__input_control">
         <input
           formControlName="title"
           type="text"
@@ -41,7 +41,7 @@
           >
         </small>
       </div>
-      <div class="create__note_input_control">
+      <div class="create_form__input_control">
         <textarea
           formControlName="content"
           name="noteContent"
@@ -59,15 +59,15 @@
           >
         </small>
       </div>
-      <div class="create__note_tags_container">
+      <div class="create_form__tags_container">
         <h2>Add to tag</h2>
-        <div class="create__note_tag_list">
+        <div class="create_form__tag_list">
           <span
             *ngFor="let item of this.tagsMock"
             (click)="toggleTagToNote(item.id)"
-            class="create__note_tag"
+            class="create_form__tag"
             [ngStyle]="{ 'background-color': getTagColor(item.color)}"
-            [class.create__note_tag_active]="noteTagsXref.includes(item)"
+            [class.create_form__tag_active]="noteTagsXref.includes(item)"
           >
             {{ item.name }}
           </span>
@@ -77,5 +77,56 @@
         Create
       </button>
     </form>
+    <form
+      *ngIf="createTypeIsTag.value"
+      (ngSubmit)="submitTagForm()"
+      [formGroup]="tagForm"
+      class="create_form__container"
+      id="tag_form"
+    >
+      <div class="create_form__input_control">
+        <input
+          formControlName="name"
+          type="text"
+          name="tagName"
+          id="tagName"
+          placeholder=""
+        />
+        <label for="tagName">Name</label>
+        <small *ngIf="name?.invalid && (name?.dirty || name?.touched)">
+          <ng-container *ngIf="name?.hasError('required')"
+            >A tag's name is required</ng-container
+          >
+          <ng-container *ngIf="name?.hasError('minlength')"
+            >The tag's name must have at least 3 characters</ng-container
+          >
+          <ng-container *ngIf="name?.hasError('maxlength')"
+            >The tag's name must have a maximum of 20 characters</ng-container
+          >
+        </small>
+      </div>
+      <div (click)="toggleColorPickerModal()" class="create_form__color_picker">
+        <span [ngStyle]="{ 'background-color': getTagColor(color?.value) }"></span>
+        <label>Color</label>
+      </div>
+      <button type="submit" form="tag_form" [disabled]="tagForm.invalid" class="create__submit_btn">
+        Create
+      </button>
+    </form>
   </div>
 </main>
+
+<div *ngIf="showColorPIckerModal" class="color_picker_modal__container" #modalOverlayEl>
+  <div class="color_picker_modal__block" #modalBlockEl>
+    <h2>Pick a color</h2>
+    <div class="color_picker_modal__list">
+      <span
+        *ngFor="let item of tagColors" (click)="pickColor(item)"
+        [ngStyle]="{ 'background-color': item.color }"
+        [class.color_picker_modal__item_active]="item.id === color?.value"
+        [id]="item.name"
+        class="color_picker_modal__item"
+      ></span>
+    </div>
+  </div>
+</div>

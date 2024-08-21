@@ -5,11 +5,11 @@ import { INote } from '../interfaces/inote';
   providedIn: 'root',
 })
 export class NoteService {
+
   constructor() {}
 
   public createNote(newNoteData: INote): void {
     let notes = this.getNotes();
-    console.log(notes);
 
     if (!notes) {
       notes = [newNoteData];

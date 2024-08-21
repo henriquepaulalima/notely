@@ -7,6 +7,12 @@ export interface ITag {
   updatedAt: Date;
 }
 
+export interface ITagColor {
+  id: TagColors;
+  name: string;
+  color: string;
+}
+
 export enum TagColors {
   LIGHT_RED,
   MEDIUM_RED,

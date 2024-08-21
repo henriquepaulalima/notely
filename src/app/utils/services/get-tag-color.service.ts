@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { TagColors } from '../interfaces/itag';
+import { ITagColor, TagColors } from '../interfaces/itag';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +7,7 @@ import { TagColors } from '../interfaces/itag';
 export class GetTagColorService {
   constructor() {}
 
-  public get(tagColor: TagColors): string {
+  public getSingle(tagColor: TagColors): string {
     switch (tagColor) {
       case TagColors.LIGHT_RED:
         return '#E57373';
@@ -30,5 +30,55 @@ export class GetTagColorService {
       default:
         throw new Error('Cannot return color code without color identifier');
     }
+  }
+
+  public getAll(): ITagColor[] {
+    return [
+      {
+        id: TagColors.LIGHT_RED,
+        name: "LIGHT_RED",
+        color: '#E57373'
+      },
+      {
+        id: TagColors.MEDIUM_RED,
+        name: "MEDIUM_RED",
+        color: '#F44336'
+      },
+      {
+        id: TagColors.DARK_RED,
+        name: "DARK_RED",
+        color: '#D32F2F'
+      },
+      {
+        id: TagColors.LIGHT_GREEN,
+        name: "LIGHT_GREEN",
+        color: '#81C784'
+      },
+      {
+        id: TagColors.MEDIUM_GREEN,
+        name: "MEDIUM_GREEN",
+        color: '#4CAF50'
+      },
+      {
+        id: TagColors.DARK_GREEN,
+        name: "DARK_GREEN",
+        color: '#388E3C'
+      },
+      {
+        id: TagColors.LIGHT_BLUE,
+        name: "LIGHT_BLUE",
+        color: '#64B5F6'
+      },
+      {
+        id: TagColors.MEDIUM_BLUE,
+        name: "MEDIUM_BLUE",
+        color: '#2196F3'
+      },
+      {
+        id: TagColors.DARK_BLUE,
+        name: "DARK_BLUE",
+        color: '#1976D2'
+      },
+    ]
   }
 }
