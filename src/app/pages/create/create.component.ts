@@ -22,7 +22,7 @@ export class CreateComponent implements OnInit {
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
-  public createTypeIsTag: FormControl<boolean | null> = new FormControl(true);
+  public createTypeIsTag: boolean = false;
   public noteForm!: FormGroup;
   public tagForm!: FormGroup;
   public tagColors!: ITagColor[];
@@ -109,6 +109,10 @@ export class CreateComponent implements OnInit {
 
   get color(): AbstractControl<any, any> | null | undefined {
     return this.tagForm.get('color');
+  }
+
+  public getTypeToggleValue(value: boolean): void {
+    this.createTypeIsTag = value;
   }
 
   public toggleTagToNote(tagId: string): void {

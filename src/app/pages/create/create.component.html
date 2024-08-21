@@ -2,19 +2,9 @@
   <app-header></app-header>
   <div class="create__page_header">
     <h1>Create new</h1>
-    <div class="create__toggle">
-      <input
-        [formControl]="createTypeIsTag"
-        type="checkbox"
-        id="create_type_toggle"
-      />
-      <label for="create_type_toggle">
-        <div>Note</div>
-        <div>Tag</div>
-      </label>
-    </div>
+    <app-type-toggle (typeToggleValue)="getTypeToggleValue($event)" [ngStyle]="{'width': '100%'}"></app-type-toggle>
     <form
-      *ngIf="!createTypeIsTag.value"
+      *ngIf="!createTypeIsTag"
       (ngSubmit)="submitNoteForm()"
       [formGroup]="noteForm"
       class="create_form__container"
@@ -78,7 +68,7 @@
       </button>
     </form>
     <form
-      *ngIf="createTypeIsTag.value"
+      *ngIf="createTypeIsTag"
       (ngSubmit)="submitTagForm()"
       [formGroup]="tagForm"
       class="create_form__container"

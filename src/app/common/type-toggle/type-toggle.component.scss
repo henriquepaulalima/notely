@@ -1,0 +1,61 @@
+@import "/src/assets/styles/variables.scss";
+
+.type__toggle {
+  width: 100%;
+
+  input {
+    display: none;
+  }
+
+  label {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    border: 3px solid $dark_grey;
+    border-radius: 20px;
+    background: $dark_grey;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+    font-weight: bold;
+    color: $dark_grey;
+    cursor: pointer;
+
+    &:before {
+      content: "";
+      position: absolute;
+      width: 50%;
+      height: 100%;
+      left: 0%;
+      border-radius: 20px;
+      background: $white;
+      transition: all 0.3s;
+    }
+
+    div {
+      padding: 6px;
+      text-align: center;
+      z-index: 1;
+
+      &:first-child {
+        color: $dark_grey;
+        transition: color 0.3s;
+      }
+      &:last-child {
+        color: $white;
+        transition: color 0.3s;
+      }
+    }
+  }
+
+  input:checked + label::before {
+    left: 50%;
+  }
+
+  input:checked + label div:first-child {
+    color: $white;
+    transition: color 0.3s;
+  }
+  input:checked + label div:last-child {
+    color: $dark_grey;
+    transition: color 0.3s;
+  }
+}

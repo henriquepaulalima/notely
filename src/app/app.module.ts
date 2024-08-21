@@ -8,6 +8,7 @@ import { CreateComponent } from './pages/create/create.component';
 import { HeaderComponent } from './common/header/header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextareaAutoresizeDirective } from './utils/directives/textarea-autoresize.directive';
+import { TypeToggleComponent } from './common/type-toggle/type-toggle.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { TextareaAutoresizeDirective } from './utils/directives/textarea-autores
     HomeComponent,
     CreateComponent,
     HeaderComponent,
-    TextareaAutoresizeDirective
+    TextareaAutoresizeDirective,
+    TypeToggleComponent
   ],
   imports: [
     BrowserModule,
