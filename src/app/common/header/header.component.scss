@@ -13,13 +13,17 @@
     height: 2rem;
     width: 2rem;
     background-color: transparent;
-    background-repeat: no-repeat;
     border: none;
     padding: 0;
-    transition: 0.25s ease;
+    transition: 0.25s ease-in-out;
 
     &:active {
       transform: scale(80%);
+    }
+
+    i {
+      font-size: 2rem;
+      color: $dark_grey;
     }
   }
 
