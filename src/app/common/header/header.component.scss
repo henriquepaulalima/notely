@@ -8,6 +8,7 @@
   justify-content: end;
   align-items: center;
   background-color: $light_yellow;
+  padding: 1.5rem;
 
   button {
     height: 2rem;
@@ -31,8 +32,8 @@
     height: 0%;
     width: 50%;
     position: absolute;
-    top: 40px;
-    right: 0;
+    top: 55px;
+    right: 22px;
     display: flex;
     justify-content: space-around;
     flex-direction: column;

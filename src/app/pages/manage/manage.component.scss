@@ -1,0 +1,25 @@
+@import "/src/assets/styles/variables.scss";
+
+.manage__container {
+  min-height: 100vh;
+  box-sizing: border-box;
+  background-color: $light_yellow;
+
+  .manage__page_header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1.5rem;
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 500;
+      color: $dark_grey;
+      padding-bottom: 1rem;
+    }
+  }
+
+  .manage__page_content {
+    width: 100%;
+  }
+}

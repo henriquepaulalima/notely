@@ -9,6 +9,8 @@ import { HeaderComponent } from './common/header/header.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TextareaAutoresizeDirective } from './utils/directives/textarea-autoresize.directive';
 import { TypeToggleComponent } from './common/type-toggle/type-toggle.component';
+import { ManageComponent } from './pages/manage/manage.component';
+import { ContentHeaderComponent } from './pages/manage/content-header/content-header.component';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { TypeToggleComponent } from './common/type-toggle/type-toggle.component'
     CreateComponent,
     HeaderComponent,
     TextareaAutoresizeDirective,
-    TypeToggleComponent
+    TypeToggleComponent,
+    ManageComponent,
+    ContentHeaderComponent
   ],
   imports: [
     BrowserModule,

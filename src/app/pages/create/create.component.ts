@@ -7,7 +7,6 @@ import {
 } from '@angular/forms';
 import { INote } from 'src/app/utils/interfaces/inote';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
-import { GetTagColorService } from 'src/app/utils/services/get-tag-color.service';
 import { NoteService } from 'src/app/utils/services/note.service';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -56,7 +55,6 @@ export class CreateComponent implements OnInit {
   public showColorPIckerModal: boolean = false;
 
   constructor(
-    private tagColorService: GetTagColorService,
     private noteService: NoteService,
     private tagService: TagService,
     private renderer: Renderer2
@@ -92,7 +90,7 @@ export class CreateComponent implements OnInit {
       ]),
     });
 
-    this.tagColors = this.tagColorService.getAll();
+    this.tagColors = this.tagService.getAllTagColors();
   }
 
   get title(): AbstractControl<any, any> | null | undefined {
@@ -131,7 +129,7 @@ export class CreateComponent implements OnInit {
   }
 
   public getTagColor(tagColor: TagColors): string {
-    return this.tagColorService.getSingle(tagColor);
+    return this.tagService.getSingleTagColor(tagColor);
   }
 
   public submitNoteForm(): void {

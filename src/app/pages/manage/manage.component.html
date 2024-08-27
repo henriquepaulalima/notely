@@ -1,0 +1,12 @@
+<main class="manage__container">
+  <app-header></app-header>
+  <div class="manage__page_header">
+    <h1>Manage your</h1>
+    <app-type-toggle (typeToggleValue)="getTypeToggleValue($event)" [ngStyle]="{'width': '100%'}">
+    </app-type-toggle>
+  </div>
+  <div class="manage__page_content">
+    <app-content-header [createTypeIsTag]="createTypeIsTag" (viewModeValue)="getViewMode($event);" (searchTextInputValue)="loadFilteredNotes($event);">
+    </app-content-header>
+  </div>
+</main>
