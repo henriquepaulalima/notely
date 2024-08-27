@@ -4,13 +4,12 @@
   min-height: 100vh;
   box-sizing: border-box;
   background-color: $light_yellow;
-  padding:  1.5rem;
 
   .create__page_header {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 1rem;
+    padding: 0 1.5rem;
 
     h1 {
       font-size: 2rem;
@@ -18,6 +17,10 @@
       color: $dark_grey;
       padding-bottom: 1rem;
     }
+  }
+
+  .create__page_content {
+    padding: 1.5rem;
 
     .create_form__container {
       width: 100%;
@@ -28,7 +31,8 @@
         position: relative;
         padding-top: 1.5rem;
 
-        input, textarea {
+        input,
+        textarea {
           height: 51px;
           width: 100%;
           border: 2px solid $dark_grey;
@@ -63,10 +67,10 @@
           transition: 0.15s ease;
         }
 
-        input:focus + label,
-        textarea:focus + label,
-        input:not(:placeholder-shown) + label,
-        textarea:not(:placeholder-shown) + label {
+        input:focus+label,
+        textarea:focus+label,
+        input:not(:placeholder-shown)+label,
+        textarea:not(:placeholder-shown)+label {
           top: 10px;
         }
 
@@ -75,6 +79,7 @@
             transform: translateY(-100%);
             opacity: 0;
           }
+
           to {
             transform: translateY(0);
             opacity: 1;
@@ -144,7 +149,7 @@
         border-radius: 10px;
         background-color: $light_yellow;
         box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
-        rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+          rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
         font-size: 1rem;
         color: $dark_yellow;
         margin-top: 1.5rem;
@@ -176,30 +181,30 @@
           transition: 0.15s ease;
         }
       }
-    }
-  }
 
-  .create__submit_btn {
-    width: 100%;
-    border: none;
-    border-radius: 10px;
-    background-color: $black;
-    font-size: 1rem;
-    font-weight: 500;
-    text-align: center;
-    color: $white;
-    margin-top: 2rem;
-    padding: 1rem 0;
-    cursor: pointer;
-    transition: 0.25s ease-in-out;
+      .create__submit_btn {
+        width: 100%;
+        border: none;
+        border-radius: 10px;
+        background-color: $black;
+        font-size: 1rem;
+        font-weight: 500;
+        text-align: center;
+        color: $white;
+        margin-top: 2rem;
+        padding: 1rem 0;
+        cursor: pointer;
+        transition: 0.25s ease-in-out;
 
-    &:disabled {
-      opacity: 0.5;
-      pointer-events: none;
-    }
+        &:disabled {
+          opacity: 0.5;
+          pointer-events: none;
+        }
 
-    &:active {
-      transform: scale(90%);
+        &:active {
+          transform: scale(90%);
+        }
+      }
     }
   }
 }
@@ -240,9 +245,11 @@
       0% {
         top: -57%;
       }
+
       50% {
         top: 35%;
       }
+
       100% {
         top: 23%;
       }
@@ -252,9 +259,11 @@
       0% {
         top: 23%;
       }
+
       50% {
         top: 35%;
       }
+
       100% {
         top: -57%;
       }
