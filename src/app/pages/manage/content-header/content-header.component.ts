@@ -57,7 +57,7 @@ export class ContentHeaderComponent implements OnInit {
       createdAt: new FormControl<OrderType>(OrderType.ASC),
     });
 
-    this.tags = this.tagService.getTags();
+    this.tags = this.tagService.getAllTags();
   }
 
   get noteTitle(): AbstractControl<any, any> | null | undefined {

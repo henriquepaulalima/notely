@@ -53,7 +53,7 @@
         <h2>Add to tag</h2>
         <div class="create_form__tag_list">
           <span
-            *ngFor="let item of this.tagsMock"
+            *ngFor="let item of this.tags"
             (click)="toggleTagToNote(item.id)"
             class="create_form__tag"
             [ngStyle]="{ 'background-color': getTagColor(item.color)}"

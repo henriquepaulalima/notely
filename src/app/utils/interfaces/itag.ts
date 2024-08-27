@@ -14,13 +14,13 @@ export interface ITagColor {
 }
 
 export enum TagColors {
-  LIGHT_RED,
-  MEDIUM_RED,
-  DARK_RED,
-  LIGHT_GREEN,
-  MEDIUM_GREEN,
-  DARK_GREEN,
-  LIGHT_BLUE,
-  MEDIUM_BLUE,
-  DARK_BLUE
+  PETERRIVER,
+  EMERALD,
+  TURQUOISE,
+  AMBER,
+  CARROT,
+  ALIZARIN,
+  AMETHYST,
+  CONCRETE,
+  WETASPHALT
 }

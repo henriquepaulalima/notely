@@ -25,32 +25,7 @@ export class CreateComponent implements OnInit {
   public noteForm!: FormGroup;
   public tagForm!: FormGroup;
   public tagColors!: ITagColor[];
-  public tagsMock: ITag[] = [
-    {
-      id: uuidv4(),
-      name: 'Tag 1',
-      color: TagColors.DARK_RED,
-      active: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: uuidv4(),
-      name: 'Tag 2',
-      color: TagColors.DARK_GREEN,
-      active: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: uuidv4(),
-      name: 'Tag 3',
-      color: TagColors.DARK_BLUE,
-      active: true,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-  ];
+  public tags: ITag[] = [];
   public noteTagsXref: ITag[] = [];
   public showColorPIckerModal: boolean = false;
 
@@ -85,12 +60,13 @@ export class CreateComponent implements OnInit {
         Validators.minLength(3),
         Validators.maxLength(20),
       ]),
-      color: new FormControl<TagColors>(TagColors.MEDIUM_GREEN, [
+      color: new FormControl<TagColors>(TagColors.PETERRIVER, [
         Validators.required,
       ]),
     });
 
     this.tagColors = this.tagService.getAllTagColors();
+    this.tags = this.tagService.getAllTags();
   }
 
   get title(): AbstractControl<any, any> | null | undefined {
@@ -114,7 +90,7 @@ export class CreateComponent implements OnInit {
   }
 
   public toggleTagToNote(tagId: string): void {
-    const tag = this.tagsMock.find((item) => item.id == tagId);
+    const tag = this.tags.find((item) => item.id == tagId);
 
     if (tag) {
       if (this.noteTagsXref.includes(tag)) {
@@ -177,7 +153,7 @@ export class CreateComponent implements OnInit {
     form.reset();
 
     if (form === this.noteForm) this.noteTagsXref = [];
-    if (form === this.tagForm) this.color?.setValue(TagColors.MEDIUM_GREEN);
+    if (form === this.tagForm) this.color?.setValue(TagColors.PETERRIVER);
   }
 
   public toggleColorPickerModal(): void {
