@@ -66,7 +66,7 @@
   </div>
 </main>
 
-<div *ngIf="showColorPIckerModal" class="color_picker_modal__container" #modalOverlayEl>
+<div *ngIf="showColorPIckerModal" [ngStyle]="{'top': screenTop + 'px'}" class="color_picker_modal__container" #modalOverlayEl>
   <div class="color_picker_modal__block" #modalBlockEl>
     <h2>Pick a color</h2>
     <div class="color_picker_modal__list">

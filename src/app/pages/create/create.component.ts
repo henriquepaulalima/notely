@@ -11,6 +11,8 @@ import { NoteService } from 'src/app/utils/services/note.service';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { v4 as uuidv4 } from 'uuid';
 
+const body = document.querySelector('body');
+
 @Component({
   selector: 'app-create',
   templateUrl: './create.component.html',
@@ -28,6 +30,7 @@ export class CreateComponent implements OnInit {
   public tags: ITag[] = [];
   public noteTagsXref: ITag[] = [];
   public showColorPIckerModal: boolean = false;
+  public screenTop: number = 0;
 
   constructor(
     private noteService: NoteService,
@@ -157,13 +160,16 @@ export class CreateComponent implements OnInit {
   }
 
   public toggleColorPickerModal(): void {
+    this.screenTop = document.documentElement.scrollTop;
     if (this.showColorPIckerModal) {
       this.modalBlockEl.nativeElement.classList.add('close');
       setTimeout(() => {
-        this.showColorPIckerModal = !this.showColorPIckerModal;
+        this.showColorPIckerModal = false;
+        if (body) body.style.overflow = 'scroll';
       }, 500);
     } else {
-      this.showColorPIckerModal = !this.showColorPIckerModal;
+      this.showColorPIckerModal = true;
+      if (body) body.style.overflow = 'hidden';
     }
   }
 

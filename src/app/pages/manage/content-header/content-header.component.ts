@@ -5,6 +5,8 @@ import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { ViewMode } from '../manage.component';
 
+const body = document.querySelector('body');
+
 @Component({
   selector: 'app-content-header',
   templateUrl: './content-header.component.html',
@@ -26,6 +28,7 @@ export class ContentHeaderComponent implements OnInit {
   public searchTextInput!: FormControl<string | null>;
   public filterTagInput!: FormControl<ITag | null>;
   public tags: ITag[] = [];
+  public screenTop: number = 0;
 
   constructor(
     private renderer: Renderer2,
@@ -73,13 +76,16 @@ export class ContentHeaderComponent implements OnInit {
   }
 
   public toggleOptionsModal(): void {
+    this.screenTop = document.documentElement.scrollTop;
     if (this.showOptionsModal) {
       this.modalBlockEl.nativeElement.classList.add('close');
       setTimeout(() => {
         this.showOptionsModal = false;
+        if (body) body.style.overflow = 'scroll';
       }, 500);
     } else {
       this.showOptionsModal = true;
+      if (body) body.style.overflow = 'hidden';
     }
   }
 

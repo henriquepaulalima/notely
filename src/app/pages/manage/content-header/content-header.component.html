@@ -7,7 +7,7 @@
   </div>
 </div>
 
-<div *ngIf="showOptionsModal" class="options_modal__container" #modalOverlayEl>
+<div *ngIf="showOptionsModal" [ngStyle]="{'top': screenTop + 'px'}" class="options_modal__container" #modalOverlayEl>
   <div class="options_modal__block" #modalBlockEl>
     <h2>Options</h2>
     <div class="options_modal__content_container">
