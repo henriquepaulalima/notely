@@ -6,7 +6,21 @@
     </app-type-toggle>
   </div>
   <div class="manage__page_content">
-    <app-content-header [createTypeIsTag]="createTypeIsTag" (viewModeValue)="getViewMode($event);" (searchTextInputValue)="loadFilteredNotes($event);">
+    <app-content-header [createTypeIsTag]="createTypeIsTag" (viewModeValue)="getViewMode($event);"
+      (searchTextInputValue)="loadFilteredNotes($event);">
     </app-content-header>
+    <div [class.list_view]="viewMode === 1" class="manage__list">
+      <div *ngFor="let note of notes" class="manage__item">
+        <div class="manage__item_info">
+          <h2>{{ note.title }}</h2>
+          <p>{{ note.content }}</p>
+        </div>
+        <div class="manage__item_tag_list">
+          <div *ngFor="let tag of note.tags" [ngStyle]="{'background-color': getTagColor(tag.color)}" class="manage__item_tag">
+            <p>{{ tag.name }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </main>
