@@ -19,12 +19,12 @@
       </button>
     </div>
     <div class="options_modal__content_container">
-      <h3>Order {{ createTypeIsTag ? 'tags' : 'notes' }}</h3>
-      <button *ngIf="!createTypeIsTag" (click)="changeOrder(noteTitle);" class="options_modal__order_button">
+      <h3>Order {{ manageTypeIsTag ? 'tags' : 'notes' }}</h3>
+      <button *ngIf="!manageTypeIsTag" (click)="changeOrder(noteTitle);" class="options_modal__order_button">
         <p>Title</p>
         <i [class.down]="noteTitle?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
-      <button *ngIf="createTypeIsTag" (click)="changeOrder(tagName);" class="options_modal__order_button">
+      <button *ngIf="manageTypeIsTag" (click)="changeOrder(tagName);" class="options_modal__order_button">
         <p>Name</p>
         <i [class.down]="tagName?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
@@ -33,7 +33,7 @@
         <i [class.down]="createdAt?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
     </div>
-    <div *ngIf="!createTypeIsTag" class="options_modal__content_container">
+    <div *ngIf="!manageTypeIsTag" class="options_modal__content_container">
       <h3>Filter notes by tag</h3>
       <div class="options_modal__tag_filter_list">
         <span *ngFor="let item of tags" (click)="filterByTag(item)" class="options_modal__tag"
@@ -42,7 +42,10 @@
           {{ item.name }}
         </span>
       </div>
-      <p *ngIf="tags.length === 0" class="options_modal__no_tag_warning">You don't have any tag</p>
+      <div *ngIf="tags.length === 0" class="options_modal__no_tag_warning">
+        <p>You don't have any tag</p>
+        <p routerLink="/create/tag" class="options_modal__no_tag_warning_link">Create a new tag</p>
+      </div>
     </div>
   </div>
 </div>

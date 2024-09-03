@@ -1,0 +1,38 @@
+<div *ngIf="showModal" [ngStyle]="{'top': screenTop + 'px'}" class="manage_modal__container" #modalOverlayEl>
+  <div class="manage_modal__block" #modalBlockEl>
+    <h2>Manage {{ typeIsTag ? 'Tag' : 'Note' }}</h2>
+    <form *ngIf="!typeIsTag" [formGroup]="typeIsTag ? this.tagForm : this.noteForm" class="manage_modal__note_form">
+      <div class="manage_modal__note_form_inputs">
+        <div class="manage_modal__note_form_input_container">
+          <label for="note_title">Title</label>
+          <input (input)="checkFormChange(noteForm);" formControlName="title" type="text" name="note_title"
+            id="note_title">
+        </div>
+        <div class="manage_modal__note_form_input_container">
+          <label for="note_content">Content</label>
+          <input (input)="checkFormChange(noteForm);" formControlName="content" type="text" name="note_content"
+            id="note_content">
+        </div>
+        <ng-container *ngIf="!editingForm">
+          <div class="manage_modal__note_form_date_container">
+            <label>Created at</label>
+            <p>{{ noteData.createdAt | date: 'dd/MM/YYYY' }}</p>
+          </div>
+          <div class="manage_modal__note_form_date_container">
+            <label>Updated at</label>
+            <p>{{ noteData.updatedAt | date: 'dd/MM/YYYY' }}</p>
+          </div>
+        </ng-container>
+      </div>
+      <div *ngIf="!editingForm" class="manage_modal__buttons_container">
+        <button (click)="startHideModal();" class="manage_modal__cancel_button">Close</button>
+        <button (click)="toggleEditForm();" *ngIf="!editingForm">Edit</button>
+      </div>
+      <div *ngIf="editingForm" class="manage_modal__buttons_container">
+        <button (click)="deleteNote();" class="manage_modal__delete_button">Delete</button>
+        <button (click)="toggleEditForm();" class="manage_modal__cancel_button">Cancel</button>
+        <button (click)="saveNote();" [disabled]="!formHasChanged" class="manaege_modal__save_button">Save</button>
+      </div>
+    </form>
+  </div>
+</div>

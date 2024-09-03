@@ -2,7 +2,7 @@
   <app-header></app-header>
   <div class="create__page_header">
     <h1>Create new</h1>
-    <app-type-toggle (typeToggleValue)="getTypeToggleValue($event)" [ngStyle]="{'width': '100%'}"></app-type-toggle>
+    <app-type-toggle [ngStyle]="{'width': '100%'}"></app-type-toggle>
   </div>
   <div class="create__page_content">
     <form *ngIf="!createTypeIsTag" (ngSubmit)="submitNoteForm()" [formGroup]="noteForm" class="create_form__container"
@@ -66,7 +66,8 @@
   </div>
 </main>
 
-<div *ngIf="showColorPIckerModal" [ngStyle]="{'top': screenTop + 'px'}" class="color_picker_modal__container" #modalOverlayEl>
+<div *ngIf="showColorPIckerModal" [ngStyle]="{'top': screenTop + 'px'}" class="color_picker_modal__container"
+  #modalOverlayEl>
   <div class="color_picker_modal__block" #modalBlockEl>
     <h2>Pick a color</h2>
     <div class="color_picker_modal__list">

@@ -5,6 +5,7 @@ import {
   FormGroup,
   Validators,
 } from '@angular/forms';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { INote } from 'src/app/utils/interfaces/inote';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
@@ -35,16 +36,28 @@ export class CreateComponent implements OnInit {
   constructor(
     private noteService: NoteService,
     private tagService: TagService,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private activatedRoute: ActivatedRoute
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
         this.toggleColorPickerModal();
       }
-    })
+    });
+
+    this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
+      const type = params.get('type');
+
+      if (type === 'note') {
+        this.createTypeIsTag = false;
+      } else if (type === 'tag') {
+        this.createTypeIsTag = true;
+      }
+    });
   }
 
   ngOnInit(): void {
+
     this.noteForm = new FormGroup({
       title: new FormControl<string>('', [
         Validators.required,
@@ -86,10 +99,6 @@ export class CreateComponent implements OnInit {
 
   get color(): AbstractControl<any, any> | null | undefined {
     return this.tagForm.get('color');
-  }
-
-  public getTypeToggleValue(value: boolean): void {
-    this.createTypeIsTag = value;
   }
 
   public toggleTagToNote(tagId: string): void {
@@ -147,7 +156,7 @@ export class CreateComponent implements OnInit {
     try {
       this.tagService.createTag(newTagData);
       this.clearForm(this.tagForm);
-    } catch(error) {
+    } catch (error) {
       console.error(error);
     }
   }

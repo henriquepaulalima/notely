@@ -122,5 +122,26 @@
         }
       }
     }
+
+    .manage__list_no_item {
+      box-sizing: border-box;
+      width: 100%;
+      font-size: 1rem;
+      font-weight: 400;
+      text-align: center;
+      color: $dark_grey;
+      padding: 0 1.5rem;
+
+      .manage__list_no_item_link {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: $blue_link;
+        padding-top: 1rem;
+
+        &:active {
+          opacity: .75;
+        }
+      }
+    }
   }
 }

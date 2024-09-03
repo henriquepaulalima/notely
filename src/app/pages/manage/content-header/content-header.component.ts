@@ -14,16 +14,16 @@ const body = document.querySelector('body');
 })
 export class ContentHeaderComponent implements OnInit {
 
-  @Input() createTypeIsTag: boolean = false;
+  @Input() manageTypeIsTag: boolean = false;
+  @Input() viewMode!: ViewMode;
 
-  @Output() viewModeValue: EventEmitter<ViewMode> = new EventEmitter();
-  @Output() searchTextInputValue: EventEmitter<string> = new EventEmitter();
+  @Output() viewModeChanged: EventEmitter<void> = new EventEmitter<void>();
+  @Output() searchTextInputValue: EventEmitter<string> = new EventEmitter<string>();
 
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
   public showOptionsModal: boolean = false;
-  public viewMode: ViewMode = ViewMode.LIST;
   public listOrder!: FormGroup;
   public searchTextInput!: FormControl<string | null>;
   public filterTagInput!: FormControl<ITag | null>;
@@ -95,7 +95,8 @@ export class ContentHeaderComponent implements OnInit {
     } else {
       this.viewMode = ViewMode.LIST;
     }
-    this.viewModeValue.emit(this.viewMode);
+    localStorage.setItem('viewMode', this.viewMode.toString());
+    this.viewModeChanged.emit();
   }
 
   public changeOrder(field: AbstractControl<any, any> | null | undefined): void {

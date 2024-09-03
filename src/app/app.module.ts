@@ -11,6 +11,7 @@ import { TextareaAutoresizeDirective } from './utils/directives/textarea-autores
 import { TypeToggleComponent } from './common/type-toggle/type-toggle.component';
 import { ManageComponent } from './pages/manage/manage.component';
 import { ContentHeaderComponent } from './pages/manage/content-header/content-header.component';
+import { ManageModalComponent } from './pages/manage/manage-modal/manage-modal.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { ContentHeaderComponent } from './pages/manage/content-header/content-he
     TextareaAutoresizeDirective,
     TypeToggleComponent,
     ManageComponent,
-    ContentHeaderComponent
+    ContentHeaderComponent,
+    ManageModalComponent
   ],
   imports: [
     BrowserModule,

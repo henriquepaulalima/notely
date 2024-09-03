@@ -2,25 +2,34 @@
   <app-header></app-header>
   <div class="manage__page_header">
     <h1>Manage your</h1>
-    <app-type-toggle (typeToggleValue)="getTypeToggleValue($event)" [ngStyle]="{'width': '100%'}">
+    <app-type-toggle [ngStyle]="{'width': '100%'}">
     </app-type-toggle>
   </div>
   <div class="manage__page_content">
-    <app-content-header [createTypeIsTag]="createTypeIsTag" (viewModeValue)="getViewMode($event);"
+    <app-content-header [viewMode]="viewMode" [manageTypeIsTag]="manageTypeIsTag" (viewModeChanged)="setNewViewMode();"
       (searchTextInputValue)="loadFilteredNotes($event);">
     </app-content-header>
-    <div [class.list_view]="viewMode === 1" class="manage__list">
-      <div *ngFor="let note of notes" class="manage__item">
+    <div [class.list_view]="viewMode === 0" class="manage__list">
+      <div *ngFor="let note of notes" (click)="toggleManageModal(note)" class="manage__item">
         <div class="manage__item_info">
           <h2>{{ note.title }}</h2>
           <p>{{ note.content }}</p>
         </div>
         <div class="manage__item_tag_list">
-          <div *ngFor="let tag of note.tags" [ngStyle]="{'background-color': getTagColor(tag.color)}" class="manage__item_tag">
+          <div *ngFor="let tag of note.tags" [ngStyle]="{'background-color': getTagColor(tag.color)}"
+            class="manage__item_tag">
             <p>{{ tag.name }}</p>
           </div>
         </div>
       </div>
     </div>
+    <div *ngIf="notes.length <= 0" class="manage__list_no_item">
+      <p>You didn't created any notes yet
+      </p>
+      <p routerLink="/create/note" class="manage__list_no_item_link">Create a new note</p>
+    </div>
   </div>
 </main>
+
+<app-manage-modal *ngIf="showManageModal" [typeIsTag]="manageTypeIsTag" [data]="currentNote" [screenTop]="screenTop"
+  (hideModal)="toggleManageModal();" (reloadList)="loadNotes();"></app-manage-modal>

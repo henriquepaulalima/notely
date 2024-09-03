@@ -4,7 +4,7 @@
     <i *ngIf="this.showMenu" class="fa-solid fa-xmark"></i>
   </button>
   <div [class.showMenu]="this.showMenu" class="header__dropdown" #dropdown>
-    <button (click)="navigateTo('/create');">Create</button>
-    <button (click)="navigateTo('/manage');">Manage</button>
+    <button (click)="navigateTo('/create/note');">Create</button>
+    <button (click)="navigateTo('/manage/note');">Manage</button>
   </div>
 </header>

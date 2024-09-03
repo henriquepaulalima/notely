@@ -15,11 +15,11 @@ const routes: Routes = [
     component: HomeComponent
   },
   {
-    path: 'create',
+    path: 'create/:type',
     component: CreateComponent
   },
   {
-    path: 'manage',
+    path: 'manage/:type',
     component: ManageComponent
   }
 ];

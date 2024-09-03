@@ -1,0 +1,159 @@
+@import "/src/assets/styles/variables.scss";
+
+.manage_modal__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  height: 100vh;
+  width: 100vw;
+  background-color: rgba($color: $dark_grey, $alpha: .75);
+  z-index: 1;
+
+  .manage_modal__block {
+    position: absolute;
+    bottom: -57%;
+    left: 8%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 80%;
+    width: 75%;
+    border: none;
+    border-radius: 10px;
+    background: $white;
+    padding: 1rem;
+    overflow: auto;
+    animation: moveFromBottom .75s ease-in-out forwards;
+
+    &.close {
+      animation: moveFromBottomOut .5s ease-in-out forwards;
+    }
+
+    @keyframes moveFromBottom {
+      0% {
+        bottom: -57%;
+      }
+
+      50% {
+        bottom: 10%;
+      }
+
+      100% {
+        bottom: 5%;
+      }
+    }
+
+    @keyframes moveFromBottomOut {
+      0% {
+        bottom: 5%;
+      }
+
+      50% {
+        bottom: 10%;
+      }
+
+      100% {
+        bottom: -57%;
+      }
+    }
+
+    h2 {
+      width: 100%;
+      font-size: 1.5rem;
+      font-weight: 500;
+      text-align: center;
+      color: $dark_grey;
+      padding: 1rem 0 2rem;
+    }
+
+    .manage_modal__note_form {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      .manage_modal__note_form_inputs {
+        .manage_modal__note_form_input_container {
+          display: flex;
+          flex-direction: column;
+          justify-content: stretch;
+          padding-bottom: 1rem;
+
+          label {
+            padding-bottom: .5rem;
+          }
+
+          input {
+            outline: 2px solid $dark-grey;
+            border: none;
+            border-radius: 7px;
+            padding: 1rem;
+
+            &[disabled] {
+              background-color: $light_grey;
+              outline: none;
+            }
+          }
+        }
+
+        .manage_modal__note_form_date_container {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 1rem;
+
+          p {
+            font-size: 1rem;
+            font-weight: 400;
+            color: $medium_grey;
+          }
+        }
+
+        label {
+          font-size: 1.25rem;
+          font-weight: 500;
+          color: $dark_grey;
+        }
+      }
+
+      .manage_modal__buttons_container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+
+        button {
+          width: 48%;
+          background-color: $dark_grey;
+          border: none;
+          border-radius: 10px;
+          color: $white;
+          padding: 1rem 0;
+
+          &[disabled] {
+            opacity: .75;
+          }
+
+          &.manage_modal__cancel_button {
+            background: transparent;
+            box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+            color: $dark_grey;
+          }
+
+          &.manage_modal__delete_button {
+            background: $red;
+          }
+
+          &.manaege_modal__save_button {
+            margin-top: 10px;
+            width: 100%;
+          }
+        }
+      }
+    }
+  }
+}
