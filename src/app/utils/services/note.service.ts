@@ -30,19 +30,23 @@ export class NoteService {
     return notes;
   }
 
-  public getFilteredNotes(text?: string, tag?: ITag): INote[] {
-    let notes = this.getAllNotes();
+  public getFilteredNotes(text?: string | null, tag?: ITag | null): INote[] {
+    let filteredNotes = this.getAllNotes();
     const lowerText = text?.toLowerCase();
 
     if (lowerText) {
-      notes = notes.filter(item => (item.title.toLowerCase().indexOf(lowerText) > -1) || (item.content.toLowerCase().indexOf(lowerText) > -1));
+      filteredNotes = filteredNotes.filter(item => (item.title.toLowerCase().indexOf(lowerText) > -1) || (item.content.toLowerCase().indexOf(lowerText) > -1));
     }
 
     if (tag) {
-      notes = notes.filter(item => item.tags.includes(tag));
+      filteredNotes = filteredNotes.filter(item => item.tags.some(itemTag => itemTag.id == tag.id));
     }
 
-    return notes;
+    if (!lowerText && !tag) {
+      filteredNotes = this.getAllNotes();
+    }
+
+    return filteredNotes;
   }
 
   public editNote(note: INote): void {

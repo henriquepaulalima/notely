@@ -1,9 +1,11 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { INote } from 'src/app/utils/interfaces/inote';
+import { OrderObject, OrderType } from 'src/app/utils/interfaces/iorder';
 import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
 import { TagService } from 'src/app/utils/services/tag.service';
+import { FilterObject } from './content-header/content-header.component';
 
 @Component({
   selector: 'app-manage',
@@ -60,8 +62,11 @@ export class ManageComponent implements OnInit {
     this.getViewMode();
   }
 
-  public loadFilteredNotes(text: string): void {
-    this.notes = this.noteService.getFilteredNotes(text);
+  public loadFilteredNotes(filterObj: FilterObject): void {
+    console.log(filterObj);
+
+    this.notes = this.noteService.getFilteredNotes(filterObj.text, filterObj.tag);
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -77,6 +82,35 @@ export class ManageComponent implements OnInit {
     } else {
       this.showManageModal = false;
     }
+  }
+
+  public orderNotes(orderObj: OrderObject): void {
+    switch (orderObj.type) {
+      case OrderType.NoteTitle:
+        if (orderObj.value === 0) {
+          this.notes = this.notes.sort((a, b) =>
+            a.title.localeCompare(b.title));
+        } else if (orderObj.value === 1) {
+          this.notes = this.notes.sort((a, b) =>
+            b.title.localeCompare(a.title));
+        }
+        break;
+      case OrderType.TagName:
+        break;
+      case OrderType.CreatedAt:
+        if (!this.manageTypeIsTag && orderObj.value === 0) {
+          this.notes = this.notes.sort((a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        } else if (!this.manageTypeIsTag && orderObj.value === 1) {
+          this.notes = this.notes.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        }
+        break;
+      default:
+        break;
+    }
+
+    console.log(this.notes);
   }
 }
 

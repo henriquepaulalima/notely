@@ -1,6 +1,6 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
-import { OrderType } from 'src/app/utils/interfaces/iorder';
+import { OrderObject, OrderType, OrderValue } from 'src/app/utils/interfaces/iorder';
 import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { ViewMode } from '../manage.component';
@@ -18,17 +18,19 @@ export class ContentHeaderComponent implements OnInit {
   @Input() viewMode!: ViewMode;
 
   @Output() viewModeChanged: EventEmitter<void> = new EventEmitter<void>();
-  @Output() searchTextInputValue: EventEmitter<string> = new EventEmitter<string>();
+  @Output() filterNotes: EventEmitter<FilterObject> = new EventEmitter<FilterObject>();
+  @Output() sendNewOrder: EventEmitter<OrderObject> = new EventEmitter<OrderObject>();
 
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
   public showOptionsModal: boolean = false;
   public listOrder!: FormGroup;
-  public searchTextInput!: FormControl<string | null>;
-  public filterTagInput!: FormControl<ITag | null>;
+  public searchTextInput: FormControl<string | null> = new FormControl<string | null>(null);
+  public filterTagInput: FormControl<ITag | null> = new FormControl<ITag | null>(null);
   public tags: ITag[] = [];
   public screenTop: number = 0;
+  public activeOrderType!: OrderType;
 
   constructor(
     private renderer: Renderer2,
@@ -55,23 +57,23 @@ export class ContentHeaderComponent implements OnInit {
     ]);
 
     this.listOrder = new FormGroup({
-      noteTitle: new FormControl<OrderType>(OrderType.ASC),
-      tagName: new FormControl<OrderType>(OrderType.ASC),
-      createdAt: new FormControl<OrderType>(OrderType.ASC),
+      noteTitle: new FormControl<OrderValue>(OrderValue.ASC),
+      tagName: new FormControl<OrderValue>(OrderValue.ASC),
+      createdAt: new FormControl<OrderValue>(OrderValue.ASC),
     });
 
     this.tags = this.tagService.getAllTags();
   }
 
-  get noteTitle(): AbstractControl<any, any> | null | undefined {
+  get noteTitle(): AbstractControl<OrderValue> | null | undefined {
     return this.listOrder.get('noteTitle');
   }
 
-  get tagName(): AbstractControl<any, any> | null | undefined {
+  get tagName(): AbstractControl<OrderValue> | null | undefined {
     return this.listOrder.get('tagName');
   }
 
-  get createdAt(): AbstractControl<any, any> | null | undefined {
+  get createdAt(): AbstractControl<OrderValue> | null | undefined {
     return this.listOrder.get('createdAt');
   }
 
@@ -99,7 +101,7 @@ export class ContentHeaderComponent implements OnInit {
     this.viewModeChanged.emit();
   }
 
-  public changeOrder(field: AbstractControl<any, any> | null | undefined): void {
+  public changeOrder(field: AbstractControl<OrderValue> | null | undefined): void {
     switch (field?.value) {
       case 0:
         field.setValue(1);
@@ -110,6 +112,29 @@ export class ContentHeaderComponent implements OnInit {
       default:
         throw new Error(`Invalid field value: ${field?.value}`);
     }
+
+    let orderType: OrderType;
+
+    switch (field) {
+      case this.noteTitle:
+        orderType = OrderType.NoteTitle;
+        break;
+      case this.tagName:
+        orderType = OrderType.TagName;
+        break;
+      case this.createdAt:
+        orderType = OrderType.CreatedAt;
+        break;
+      default:
+        throw new Error(`Invalid field value: ${field?.value}`);
+    }
+
+    this.activeOrderType = orderType;
+
+    this.sendNewOrder.emit({
+      type: orderType,
+      value: field.value
+    });
   }
 
   public getTagColor(tagColor: TagColors): string {
@@ -117,16 +142,36 @@ export class ContentHeaderComponent implements OnInit {
   }
 
   public filterByTag(tag: ITag): void {
-    if (this.filterTagInput.value === tag) {
-      this.filterTagInput.setValue(null);
-    } else {
-      this.filterTagInput.setValue(tag);
-    }
+    this.toggleOptionsModal();
+
+    setTimeout(() => {
+      if (this.filterTagInput.value === tag) {
+        this.filterTagInput.setValue(null);
+      } else {
+        this.filterTagInput.setValue(tag);
+      }
+
+      this.filterNotes.emit({
+        text: this.searchTextInput.value,
+        tag: this.filterTagInput.value
+      });
+    }, 500);
   }
 
   public sendSearchInputValue(): void {
-    let input = '';
-    if (this.searchTextInput?.value) input = this.searchTextInput.value;
-    this.searchTextInputValue.emit(input);
+    this.filterNotes.emit({
+      text: this.searchTextInput.value,
+      tag: this.filterTagInput.value
+    });
   }
+
+  public clearSearchInput(): void {
+    this.searchTextInput.setValue(null);
+    this.sendSearchInputValue();
+  }
+}
+
+export interface FilterObject {
+  text: string | null;
+  tag: ITag | null;
 }

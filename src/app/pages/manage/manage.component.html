@@ -7,8 +7,11 @@
   </div>
   <div class="manage__page_content">
     <app-content-header [viewMode]="viewMode" [manageTypeIsTag]="manageTypeIsTag" (viewModeChanged)="setNewViewMode();"
-      (searchTextInputValue)="loadFilteredNotes($event);">
+      (filterNotes)="loadFilteredNotes($event);" (sendNewOrder)="orderNotes($event);">
     </app-content-header>
+    <p *ngIf="notes.length > 0" class="manage__page_list_counter">
+      {{ notes.length }} note{{ notes.length > 1 ? 's' : '' }} found
+    </p>
     <div [class.list_view]="viewMode === 0" class="manage__list">
       <div *ngFor="let note of notes" (click)="toggleManageModal(note)" class="manage__item">
         <div class="manage__item_info">
@@ -24,7 +27,7 @@
       </div>
     </div>
     <div *ngIf="notes.length <= 0" class="manage__list_no_item">
-      <p>You didn't created any notes yet
+      <p>No notes found
       </p>
       <p routerLink="/create/note" class="manage__list_no_item_link">Create a new note</p>
     </div>

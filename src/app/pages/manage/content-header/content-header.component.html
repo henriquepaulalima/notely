@@ -3,7 +3,12 @@
   <div class=manage__serach_input_container>
     <input (input)="sendSearchInputValue();" [formControl]="searchTextInput" type="text" name="search" id="search"
       placeholder="Search">
-    <label for="search"><i class="fa-solid fa-magnifying-glass"></i></label>
+    <label *ngIf="!searchTextInput.value" for="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </label>
+    <label (click)="clearSearchInput();" *ngIf="searchTextInput.value" for="search">
+      <i class="fa-solid fa-xmark"></i>
+    </label>
   </div>
 </div>
 
@@ -20,15 +25,15 @@
     </div>
     <div class="options_modal__content_container">
       <h3>Order {{ manageTypeIsTag ? 'tags' : 'notes' }}</h3>
-      <button *ngIf="!manageTypeIsTag" (click)="changeOrder(noteTitle);" class="options_modal__order_button">
+      <button *ngIf="!manageTypeIsTag" (click)="changeOrder(noteTitle);" [class.active]="activeOrderType === 0" class="options_modal__order_button">
         <p>Title</p>
         <i [class.down]="noteTitle?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
-      <button *ngIf="manageTypeIsTag" (click)="changeOrder(tagName);" class="options_modal__order_button">
+      <button *ngIf="manageTypeIsTag" (click)="changeOrder(tagName);" [class.active]="activeOrderType === 1" class="options_modal__order_button">
         <p>Name</p>
         <i [class.down]="tagName?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
-      <button (click)="changeOrder(createdAt);" class="options_modal__order_button">
+      <button (click)="changeOrder(createdAt);" [class.active]="activeOrderType === 2" class="options_modal__order_button">
         <p>Created date</p>
         <i [class.down]="createdAt?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
@@ -43,7 +48,7 @@
         </span>
       </div>
       <div *ngIf="tags.length === 0" class="options_modal__no_tag_warning">
-        <p>You don't have any tag</p>
+        <p>No tags found</p>
         <p routerLink="/create/tag" class="options_modal__no_tag_warning_link">Create a new tag</p>
       </div>
     </div>

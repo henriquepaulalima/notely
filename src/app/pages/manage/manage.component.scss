@@ -22,6 +22,13 @@
   .manage__page_content {
     width: 100%;
 
+    .manage__page_list_counter {
+      font-size: 1rem;
+      font-weight: 500;
+      color: $dark_grey;
+      text-align: center;
+    }
+
     .manage__list {
       display: grid;
       grid-template-columns: 1fr 1fr;

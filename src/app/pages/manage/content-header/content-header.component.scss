@@ -196,6 +196,10 @@
         padding: 1rem;
         margin: .5rem 0;
 
+        &.active {
+          box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+        }
+
         i {
           position: absolute;
           right: 15px;
