@@ -47,6 +47,7 @@ export class ManageComponent implements OnInit {
 
   public loadNotes(): void {
     this.notes = this.noteService.getAllNotes();
+    if (!this.notes) this.notes = [];
   }
 
   public getViewMode(): void {
@@ -63,8 +64,6 @@ export class ManageComponent implements OnInit {
   }
 
   public loadFilteredNotes(filterObj: FilterObject): void {
-    console.log(filterObj);
-
     this.notes = this.noteService.getFilteredNotes(filterObj.text, filterObj.tag);
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -109,8 +108,6 @@ export class ManageComponent implements OnInit {
       default:
         break;
     }
-
-    console.log(this.notes);
   }
 }
 

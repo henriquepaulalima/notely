@@ -63,6 +63,7 @@ export class ContentHeaderComponent implements OnInit {
     });
 
     this.tags = this.tagService.getAllTags();
+    if (!this.tags) this.tags = [];
   }
 
   get noteTitle(): AbstractControl<OrderValue> | null | undefined {
