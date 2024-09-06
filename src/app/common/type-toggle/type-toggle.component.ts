@@ -21,12 +21,14 @@ export class TypeToggleComponent implements OnInit {
 
   ngOnInit(): void {
     this.activetedRouter.paramMap.subscribe((params: ParamMap) => {
-      if (params.get('type') === 'note') {
-        this.typeIsTag.setValue(false);
-      } else if (params.get('type') === 'tag') {
+      const createType = params.get('type');
+
+      if (createType === 'tag') {
         this.typeIsTag.setValue(true);
+      } else if (createType === 'note') {
+        this.typeIsTag.setValue(false);
       }
-    })
+    });
 
     this.activetedRouter.url.subscribe((url: UrlSegment[]) => {
       this.currentPage = url[0].path;
@@ -34,12 +36,11 @@ export class TypeToggleComponent implements OnInit {
   }
 
   public handleInputChange(): void {
-    if (this.typeIsTag.value) {
-      this.router.navigate([this.currentPage, 'note']);
-      this.routeChanged.emit();
-    } else {
-      this.router.navigate([this.currentPage, 'tag']);
-      this.routeChanged.emit();
-    }
+    const route = `/${this.currentPage}/${this.typeIsTag.value ? 'tag' : 'note'}`;
+
+    this.router.navigate([route])
+      .catch((error: Error) => {
+        console.error(error);
+      });
   }
 }
