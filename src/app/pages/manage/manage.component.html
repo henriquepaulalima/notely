@@ -7,32 +7,47 @@
   </div>
   <div class="manage__page_content">
     <app-content-header [viewMode]="viewMode" [manageTypeIsTag]="manageTypeIsTag" (viewModeChanged)="setNewViewMode();"
-      (filterNotes)="loadFilteredNotes($event);" (sendNewOrder)="orderNotes($event);">
+      (filterList)="loadFilteredList($event);" (sendNewOrder)="orderList($event);">
     </app-content-header>
-    <p *ngIf="notes.length > 0" class="manage__page_list_counter">
+    <p *ngIf="!manageTypeIsTag && notes.length > 0" class="manage__page_list_counter">
       {{ notes.length }} note{{ notes.length > 1 ? 's' : '' }} found
     </p>
-    <div [class.list_view]="viewMode === 0" class="manage__list">
+    <p *ngIf="manageTypeIsTag && tags.length > 0" class="manage__page_list_counter">
+      {{ tags.length }} tag{{ tags.length > 1 ? 's' : '' }} found
+    </p>
+    <div *ngIf="!manageTypeIsTag" [class.list_view]="viewMode === 0" class="manage__list">
       <div *ngFor="let note of notes" (click)="toggleManageModal(note)" class="manage__item">
         <div class="manage__item_info">
           <h2>{{ note.title }}</h2>
           <p>{{ note.content }}</p>
         </div>
-        <div class="manage__item_tag_list">
+        <div class="manage__item_note_tag_list">
           <div *ngFor="let tag of note.tags" [ngStyle]="{'background-color': getTagColor(tag.color)}"
-            class="manage__item_tag">
+            class="manage__item_note_tag">
             <p>{{ tag.name }}</p>
           </div>
         </div>
       </div>
     </div>
-    <div *ngIf="notes.length <= 0" class="manage__list_no_item">
+    <div *ngIf="manageTypeIsTag" [class.list_view]="viewMode === 0" class="manage__list">
+      <div *ngFor="let tag of tags" (click)="toggleManageModal(tag)" [ngStyle]="{'background-color': getTagColor(tag.color)}" class="manage__item_tag">
+        <div class="manage__item_info">
+          <h2>{{ tag.name }}</h2>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="!manageTypeIsTag && notes.length <= 0" class="manage__list_no_item">
       <p>No notes found
       </p>
       <p routerLink="/create/note" class="manage__list_no_item_link">Create a new note</p>
+    </div>
+    <div *ngIf="manageTypeIsTag && tags.length <= 0" class="manage__list_no_item">
+      <p>No tags found
+      </p>
+      <p routerLink="/create/tag" class="manage__list_no_item_link">Create a new tag</p>
     </div>
   </div>
 </main>
 
 <app-manage-modal *ngIf="showManageModal" [typeIsTag]="manageTypeIsTag" [data]="currentNote" [screenTop]="screenTop"
-  (hideModal)="toggleManageModal();" (reloadList)="loadNotes();"></app-manage-modal>
+  (hideModal)="toggleManageModal();" (reloadList)="loadList(true);"></app-manage-modal>

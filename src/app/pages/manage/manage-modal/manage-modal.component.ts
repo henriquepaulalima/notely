@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/fo
 import { INote } from 'src/app/utils/interfaces/inote';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
+import { TagService } from 'src/app/utils/services/tag.service';
 
 const body = document.querySelector('body');
 
@@ -30,10 +31,13 @@ export class ManageModalComponent implements OnInit {
   public editingForm: boolean = false;
   public formHasChanged: boolean = false;
   public initialFormData!: Object;
+  public tagColors: ITagColor[] = [];
+  public editingTagColor: boolean = false;
 
   constructor(
     private renderer: Renderer2,
-    private noteService: NoteService
+    private noteService: NoteService,
+    private tagService: TagService
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
@@ -49,10 +53,15 @@ export class ManageModalComponent implements OnInit {
       this.tagData = this.data as ITag;
       this.tagForm = new FormGroup({
         name: new FormControl<string>(this.tagData.name, Validators.required),
-        color: new FormControl<TagColors>(this.tagData.color, Validators.required),
-        createdAt: new FormControl<Date>(this.tagData.createdAt, Validators.required),
-        updatedAt: new FormControl<Date>(this.tagData.updatedAt, Validators.required)
+        color: new FormControl<TagColors>(this.tagData.color, Validators.required)
       });
+
+      this.initialFormData = this.tagForm.value;
+
+      this.tagForm.get('name')?.disable();
+      this.tagForm.get('color')?.disable();
+
+      this.tagColors = this.tagService.getAllTagColors();
     } else {
       this.noteData = this.data as INote;
       this.noteForm = new FormGroup({
@@ -67,6 +76,10 @@ export class ManageModalComponent implements OnInit {
     }
   }
 
+  get tagColor(): AbstractControl<any, any> | null | undefined {
+    return this.tagForm.get('color');
+  }
+
   public startHideModal(): void {
     this.modalBlockEl.nativeElement.classList.add('close');
     setTimeout(() => {
@@ -79,13 +92,25 @@ export class ManageModalComponent implements OnInit {
   public toggleEditForm(): void {
     if (this.editingForm) {
       this.editingForm = false
-      this.noteForm.get('title')?.disable();
-      this.noteForm.get('content')?.disable();
-      this.noteForm.setValue(this.initialFormData);
+      if (this.typeIsTag) {
+        this.tagForm.get('name')?.disable();
+        this.tagForm.get('color')?.disable();
+        this.tagForm.setValue(this.initialFormData);
+      } else {
+        this.noteForm.get('title')?.disable();
+        this.noteForm.get('content')?.disable();
+        this.noteForm.setValue(this.initialFormData);
+      }
     } else {
-      this.editingForm = true;
-      this.noteForm.get('title')?.enable();
-      this.noteForm.get('content')?.enable();
+      if(this.typeIsTag) {
+        this.editingForm = true;
+        this.tagForm.get('name')?.enable();
+        this.tagForm.get('color')?.enable();
+      } else {
+        this.editingForm = true;
+        this.noteForm.get('title')?.enable();
+        this.noteForm.get('content')?.enable();
+      }
     }
   }
 
@@ -97,27 +122,58 @@ export class ManageModalComponent implements OnInit {
     }
   }
 
-  public saveNote() {
-    const noteToEditData: INote = {
-      id: this.noteData.id,
-      title: this.noteForm.get('title')?.value,
-      content: this.noteForm.get('content')?.value,
-      tags: this.noteData.tags,
-      createdAt: this.noteData.createdAt,
-      updatedAt: new Date(),
-      active: true
-    };
+  public save() {
+    if (this.typeIsTag) {
+      const tagToEditData: ITag = {
+        id: this.tagData.id,
+        name: this.tagForm.get('name')?.value,
+        color: this.tagColor?.value,
+        createdAt: this.tagData.createdAt,
+        updatedAt: new Date(),
+        active: true
+      };
 
-    this.noteService.editNote(noteToEditData);
+      this.tagService.editTag(tagToEditData);
+    } else {
+      const noteToEditData: INote = {
+        id: this.noteData.id,
+        title: this.noteForm.get('title')?.value,
+        content: this.noteForm.get('content')?.value,
+        tags: this.noteData.tags,
+        createdAt: this.noteData.createdAt,
+        updatedAt: new Date(),
+        active: true
+      };
+
+      this.noteService.editNote(noteToEditData);
+    }
 
     this.reloadList.emit();
     this.startHideModal();
   }
 
-  public deleteNote(): void {
-    this.noteService.deleteNote(this.noteData.id);
+  public delete(): void {
+    if (this.typeIsTag) {
+      this.tagService.deleteTag(this.tagData.id);
+    } else {
+      this.noteService.deleteNote(this.noteData.id);
+    }
 
     this.reloadList.emit();
     this.startHideModal();
+  }
+
+  public getTagColor(tagColor: TagColors | null | undefined): string {
+    if (tagColor) {
+      return this.tagService.getSingleTagColor(tagColor);
+    } else {
+      throw new Error('Attribute: tagColor is null');
+    }
+  }
+
+  public pickColor(colorElement: TagColors): void {
+    this.tagColor?.setValue(colorElement);
+    this.editingTagColor = false;
+    this.checkFormChange(this.tagForm);
   }
 }

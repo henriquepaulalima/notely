@@ -26,7 +26,8 @@ export class NoteService {
   }
 
   public getAllNotes(): INote[] {
-    const notes = JSON.parse(localStorage.getItem('notes')!);
+    let notes = JSON.parse(localStorage.getItem('notes')!);
+    if (!notes) notes = [];
     return notes;
   }
 

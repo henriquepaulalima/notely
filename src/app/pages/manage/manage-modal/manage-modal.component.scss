@@ -24,7 +24,6 @@
     border-radius: 10px;
     background: $white;
     padding: 1rem;
-    overflow: auto;
     animation: moveFromBottom .75s ease-in-out forwards;
 
     &.close {
@@ -68,37 +67,97 @@
       padding: 1rem 0 2rem;
     }
 
-    .manage_modal__note_form {
+    .manage_modal__form {
       height: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      overflow: auto;
+      scrollbar-width: none;
 
-      .manage_modal__note_form_inputs {
-        .manage_modal__note_form_input_container {
+      .manage_modal__form_inputs {
+        .manage_modal__form_input_container {
           display: flex;
           flex-direction: column;
           justify-content: stretch;
           padding-bottom: 1rem;
+
+          &.has_color_picker {
+            height: 100%;
+          }
 
           label {
             padding-bottom: .5rem;
           }
 
           input {
-            outline: 2px solid $dark-grey;
-            border: none;
+            height: 1rem;
+            border: 2px solid $dark-grey;
             border-radius: 7px;
             padding: 1rem;
 
             &[disabled] {
               background-color: $light_grey;
-              outline: none;
+              border: none;
+            }
+          }
+
+          .manage_modal__current_tag_color {
+            box-sizing: border-box;
+            height: 48px;
+            width: 100%;
+            border-radius: 7px;
+            padding: 1rem;
+            transition: .25s ease-in-out;
+
+            &.disabled {
+              pointer-events: none;
+            }
+
+            &.hide {
+              height: 0%;
+              padding: 0;
+            }
+
+            i {
+              color: $white;
+            }
+          }
+
+          .color_picker__list {
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            row-gap: 10px;
+            column-gap: 10px;
+            transition: .25s ease-in-out;
+
+            &.hide {
+              height: 0%;
+            }
+
+            .color_picker__item {
+              flex: 1 0 30%;
+              height: 30%;
+              border: none;
+              border-radius: 10px;
+              transition: .25s ease-in-out;
+
+              &:active {
+                transform: scale(75%);
+              }
+
+              &.color_picker_modal__item_active {
+                box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+              }
             }
           }
         }
 
-        .manage_modal__note_form_date_container {
+        .manage_modal__form_date_container {
           display: flex;
           flex-direction: row;
           justify-content: space-between;
@@ -118,40 +177,41 @@
           color: $dark_grey;
         }
       }
+    }
 
-      .manage_modal__buttons_container {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
+    .manage_modal__buttons_container {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 1rem;
 
-        button {
-          width: 48%;
-          background-color: $dark_grey;
-          border: none;
-          border-radius: 10px;
-          color: $white;
-          padding: 1rem 0;
+      button {
+        width: 48%;
+        background-color: $dark_grey;
+        border: none;
+        border-radius: 10px;
+        color: $white;
+        padding: 1rem 0;
 
-          &[disabled] {
-            opacity: .75;
-          }
+        &[disabled] {
+          opacity: .75;
+        }
 
-          &.manage_modal__cancel_button {
-            background: transparent;
-            box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
-            color: $dark_grey;
-          }
+        &.manage_modal__cancel_button {
+          background: transparent;
+          box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+          color: $dark_grey;
+        }
 
-          &.manage_modal__delete_button {
-            background: $red;
-          }
+        &.manage_modal__delete_button {
+          background: $red;
+        }
 
-          &.manaege_modal__save_button {
-            margin-top: 10px;
-            width: 100%;
-          }
+        &.manaege_modal__save_button {
+          margin-top: 10px;
+          width: 100%;
         }
       }
     }

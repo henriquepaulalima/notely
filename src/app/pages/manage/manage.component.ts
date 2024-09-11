@@ -20,6 +20,7 @@ export class ManageComponent implements OnInit {
   public manageTypeIsTag: boolean = false;
   public viewMode!: ViewMode;
   public notes: INote[] = [];
+  public tags: ITag[] = [];
   public showManageModal: boolean = false;
   public currentNote!: INote | ITag;
   public screenTop: number = 0;
@@ -41,13 +42,20 @@ export class ManageComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.loadNotes();
+    this.loadList(false);
+
     this.getViewMode();
   }
 
-  public loadNotes(): void {
-    this.notes = this.noteService.getAllNotes();
-    if (!this.notes) this.notes = [];
+  public loadList(reload: boolean): void {
+    if (reload && this.manageTypeIsTag) {
+      this.tags = this.tagService.getAllTags();
+    } else if (reload && !this.manageTypeIsTag) {
+      this.notes = this.noteService.getAllNotes();
+    } else if (!reload) {
+      this.tags = this.tagService.getAllTags();
+      this.notes = this.noteService.getAllNotes();
+    }
   }
 
   public getViewMode(): void {
@@ -63,8 +71,12 @@ export class ManageComponent implements OnInit {
     this.getViewMode();
   }
 
-  public loadFilteredNotes(filterObj: FilterObject): void {
-    this.notes = this.noteService.getFilteredNotes(filterObj.text, filterObj.tag);
+  public loadFilteredList(filterObj: FilterObject): void {
+    if (this.manageTypeIsTag) {
+      this.tags = this.tagService.getFilteredTags(filterObj.text);
+    } else {
+      this.notes = this.noteService.getFilteredNotes(filterObj.text, filterObj.tag);
+    }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -83,7 +95,7 @@ export class ManageComponent implements OnInit {
     }
   }
 
-  public orderNotes(orderObj: OrderObject): void {
+  public orderList(orderObj: OrderObject): void {
     switch (orderObj.type) {
       case OrderType.NoteTitle:
         if (orderObj.value === 0) {
@@ -95,6 +107,11 @@ export class ManageComponent implements OnInit {
         }
         break;
       case OrderType.TagName:
+        if (orderObj.value === 0) {
+          this.tags = this.tags.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (orderObj.value === 1) {
+          this.tags = this.tags.sort((a, b) => b.name.localeCompare(a.name));
+        }
         break;
       case OrderType.CreatedAt:
         if (!this.manageTypeIsTag && orderObj.value === 0) {
@@ -102,6 +119,12 @@ export class ManageComponent implements OnInit {
             new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         } else if (!this.manageTypeIsTag && orderObj.value === 1) {
           this.notes = this.notes.sort((a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        } else if (this.manageTypeIsTag && orderObj.value === 0) {
+          this.tags = this.tags.sort((a, b) =>
+            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+        } else if (this.manageTypeIsTag && orderObj.value === 1) {
+          this.tags = this.tags.sort((a, b) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
         }
         break;

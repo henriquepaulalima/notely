@@ -18,7 +18,7 @@ export class ContentHeaderComponent implements OnInit {
   @Input() viewMode!: ViewMode;
 
   @Output() viewModeChanged: EventEmitter<void> = new EventEmitter<void>();
-  @Output() filterNotes: EventEmitter<FilterObject> = new EventEmitter<FilterObject>();
+  @Output() filterList: EventEmitter<FilterObject> = new EventEmitter<FilterObject>();
   @Output() sendNewOrder: EventEmitter<OrderObject> = new EventEmitter<OrderObject>();
 
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
@@ -152,7 +152,7 @@ export class ContentHeaderComponent implements OnInit {
         this.filterTagInput.setValue(tag);
       }
 
-      this.filterNotes.emit({
+      this.filterList.emit({
         text: this.searchTextInput.value,
         tag: this.filterTagInput.value
       });
@@ -160,7 +160,7 @@ export class ContentHeaderComponent implements OnInit {
   }
 
   public sendSearchInputValue(): void {
-    this.filterNotes.emit({
+    this.filterList.emit({
       text: this.searchTextInput.value,
       tag: this.filterTagInput.value
     });
@@ -174,5 +174,5 @@ export class ContentHeaderComponent implements OnInit {
 
 export interface FilterObject {
   text: string | null;
-  tag: ITag | null;
+  tag?: ITag | null;
 }
