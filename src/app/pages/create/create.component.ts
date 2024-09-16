@@ -156,6 +156,7 @@ export class CreateComponent implements OnInit {
     try {
       this.tagService.createTag(newTagData);
       this.clearForm(this.tagForm);
+      this.tags = this.tagService.getAllTags();
     } catch (error) {
       console.error(error);
     }
