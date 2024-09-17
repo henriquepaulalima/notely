@@ -4,6 +4,7 @@ import { OrderObject, OrderType, OrderValue } from 'src/app/utils/interfaces/ior
 import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { ViewMode } from '../manage.component';
+import { Subject } from 'rxjs';
 
 const body = document.querySelector('body');
 
@@ -16,18 +17,17 @@ export class ContentHeaderComponent implements OnInit {
 
   @Input() manageTypeIsTag: boolean = false;
   @Input() viewMode!: ViewMode;
-
-  @Output() viewModeChanged: EventEmitter<void> = new EventEmitter<void>();
-  @Output() filterList: EventEmitter<FilterObject> = new EventEmitter<FilterObject>();
-  @Output() sendNewOrder: EventEmitter<OrderObject> = new EventEmitter<OrderObject>();
-
+  @Input() reloadTagList!: Subject<void>;
+  @Output() viewModeChanged = new EventEmitter<void>();
+  @Output() filterList = new EventEmitter<FilterObject>();
+  @Output() sendNewOrder = new EventEmitter<OrderObject>();
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
   public showOptionsModal: boolean = false;
   public listOrder!: FormGroup;
-  public searchTextInput: FormControl<string | null> = new FormControl<string | null>(null);
-  public filterTagInput: FormControl<ITag | null> = new FormControl<ITag | null>(null);
+  public searchTextInput = new FormControl<string | null>(null);
+  public filterTagInput = new FormControl<ITag | null>(null);
   public tags: ITag[] = [];
   public screenTop: number = 0;
   public activeOrderType!: OrderType;
@@ -62,8 +62,9 @@ export class ContentHeaderComponent implements OnInit {
       createdAt: new FormControl<OrderValue>(OrderValue.ASC),
     });
 
-    this.tags = this.tagService.getAllTags();
-    if (!this.tags) this.tags = [];
+    this.loadTagList();
+
+    this.reloadTagList.subscribe(() => this.loadTagList())
   }
 
   get noteTitle(): AbstractControl<OrderValue> | null | undefined {
@@ -76,6 +77,11 @@ export class ContentHeaderComponent implements OnInit {
 
   get createdAt(): AbstractControl<OrderValue> | null | undefined {
     return this.listOrder.get('createdAt');
+  }
+
+  public loadTagList(): void {
+    this.tags = this.tagService.getAllTags();
+    if (!this.tags) this.tags = [];
   }
 
   public toggleOptionsModal(): void {

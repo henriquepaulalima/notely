@@ -33,7 +33,7 @@
         <div class="create_form__tag_list">
           <span *ngFor="let item of this.tags" (click)="toggleTagToNote(item.id)" class="create_form__tag"
             [ngStyle]="{ 'background-color': getTagColor(item.color)}"
-            [class.create_form__tag_active]="noteTagsXref.includes(item)">
+            [class.create_form__tag_active]="noteTagsXref.includes(item.id)">
             {{ item.name }}
           </span>
         </div>

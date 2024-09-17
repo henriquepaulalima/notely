@@ -6,6 +6,7 @@ import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { FilterObject } from './content-header/content-header.component';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-manage',
@@ -24,6 +25,7 @@ export class ManageComponent implements OnInit {
   public showManageModal: boolean = false;
   public currentNote!: INote | ITag;
   public screenTop: number = 0;
+  public reloadContentHeaderTagList = new Subject<void>();
 
   constructor(
     private noteService: NoteService,
@@ -50,6 +52,7 @@ export class ManageComponent implements OnInit {
   public loadList(reload: boolean): void {
     if (reload && this.manageTypeIsTag) {
       this.tags = this.tagService.getAllTags();
+      this.reloadContentHeaderTagList.next();
     } else if (reload && !this.manageTypeIsTag) {
       this.notes = this.noteService.getAllNotes();
     } else if (!reload) {

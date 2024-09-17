@@ -1,10 +1,8 @@
-import { ITag } from "./itag";
-
 export interface INote {
   id: string;
   title: string;
   content: string;
-  tags: ITag[];
+  tags: string[];
   active: boolean;
   createdAt: Date;
   updatedAt: Date;

@@ -40,7 +40,7 @@ export class NoteService {
     }
 
     if (tag) {
-      filteredNotes = filteredNotes.filter(item => item.tags.some(itemTag => itemTag.id == tag.id));
+      filteredNotes = filteredNotes.filter(item => item.tags.some(itemTag => itemTag == tag.id));
     }
 
     if (!lowerText && !tag) {

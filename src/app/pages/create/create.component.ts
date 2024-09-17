@@ -31,7 +31,7 @@ export class CreateComponent implements OnInit {
   public tagForm!: FormGroup;
   public tagColors!: ITagColor[];
   public tags: ITag[] = [];
-  public noteTagsXref: ITag[] = [];
+  public noteTagsXref: string[] = [];
   public showColorPIckerModal: boolean = false;
   public screenTop: number = 0;
 
@@ -105,17 +105,11 @@ export class CreateComponent implements OnInit {
   }
 
   public toggleTagToNote(tagId: string): void {
-    const tag = this.tags.find((item) => item.id == tagId);
-
-    if (tag) {
-      if (this.noteTagsXref.includes(tag)) {
-        const tagIndex = this.noteTagsXref.indexOf(tag);
-        this.noteTagsXref.splice(tagIndex, 1);
-      } else {
-        this.noteTagsXref.push(tag);
-      }
+    if (this.noteTagsXref.includes(tagId)) {
+      const tagIndex = this.noteTagsXref.indexOf(tagId);
+      this.noteTagsXref.splice(tagIndex, 1);
     } else {
-      throw new Error("Could not find tag in tag list");
+      this.noteTagsXref.push(tagId);
     }
   }
 

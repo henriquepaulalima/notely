@@ -206,7 +206,7 @@ export class ManageModalComponent implements OnInit {
   }
 
   public getTagColor(tagColor: TagColors | null | undefined): string {
-    if (tagColor) {
+    if (tagColor != null) {
       return this.tagService.getSingleTagColor(tagColor);
     } else {
       throw new Error('Attribute: tagColor is null');
