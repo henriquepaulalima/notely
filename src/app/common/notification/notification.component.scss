@@ -31,14 +31,14 @@
         font-size: 1.25rem;
         font-weight: 500;
         text-align: start;
-        padding: 1rem 1rem .5rem;
+        padding: 1rem 1rem 0.5rem;
       }
 
       p {
         font-size: 1rem;
         font-weight: 400;
         text-align: start;
-        padding: 0 1rem .5rem;
+        padding: 0 1rem 0.5rem;
       }
 
       .notification__progress_bar {
@@ -62,18 +62,39 @@
 }
 
 @keyframes progress {
-  0% { width: 100%; }
-  100% { width: 0%; }
+  0% {
+    width: 100%;
+  }
+
+  100% {
+    width: 0%;
+  }
 }
 
 @keyframes showNotification {
-  0% { right: -75%; }
-  50% { right: 15%; }
-  100% { right: 5%; }
+  0% {
+    right: -75%;
+  }
+
+  50% {
+    right: 15%;
+  }
+
+  100% {
+    right: 5%;
+  }
 }
 
 @keyframes hideNotification {
-  0% { right: 5%; }
-  50% { right: 15%; }
-  100% { right: -75%; }
+  0% {
+    right: 5%;
+  }
+
+  50% {
+    right: 15%;
+  }
+
+  100% {
+    right: -75%;
+  }
 }

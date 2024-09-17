@@ -1,4 +1,10 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnInit,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -22,7 +28,6 @@ const body = document.querySelector('body');
   styleUrls: ['./create.component.scss'],
 })
 export class CreateComponent implements OnInit {
-
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
@@ -40,7 +45,7 @@ export class CreateComponent implements OnInit {
     private tagService: TagService,
     private notificationService: NotificationService,
     private renderer: Renderer2,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
@@ -60,7 +65,6 @@ export class CreateComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
     this.noteForm = new FormGroup({
       title: new FormControl<string>('', [
         Validators.required,
@@ -118,7 +122,7 @@ export class CreateComponent implements OnInit {
   }
 
   public submitNoteForm(): void {
-    if (this.noteForm.invalid) throw new Error('Note\'s form is invalid');
+    if (this.noteForm.invalid) throw new Error("Note's form is invalid");
 
     const newNoteData: INote = {
       id: uuidv4(),
@@ -134,16 +138,24 @@ export class CreateComponent implements OnInit {
       this.noteService.createNote(newNoteData);
       this.clearForm(this.noteForm);
 
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New note created' })
+      this.notificationService.createNewNotification({
+        id: uuidv4(),
+        type: NotificationType.SUCCESS,
+        message: 'New note created',
+      });
     } catch (error) {
       console.error(error);
 
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not create new note' });
+      this.notificationService.createNewNotification({
+        id: uuidv4(),
+        type: NotificationType.ERROR,
+        message: 'Could not create new note',
+      });
     }
   }
 
   public submitTagForm(): void {
-    if (this.tagForm.invalid) throw new Error('Tag\'s form is invalid');
+    if (this.tagForm.invalid) throw new Error("Tag's form is invalid");
 
     const newTagData: ITag = {
       id: uuidv4(),
@@ -159,11 +171,19 @@ export class CreateComponent implements OnInit {
       this.clearForm(this.tagForm);
       this.tags = this.tagService.getAllTags();
 
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New tag created' });
+      this.notificationService.createNewNotification({
+        id: uuidv4(),
+        type: NotificationType.SUCCESS,
+        message: 'New tag created',
+      });
     } catch (error) {
       console.error(error);
 
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not create new tag' });
+      this.notificationService.createNewNotification({
+        id: uuidv4(),
+        type: NotificationType.ERROR,
+        message: 'Could not create new tag',
+      });
     }
   }
 
@@ -198,6 +218,10 @@ export class CreateComponent implements OnInit {
   }
 
   public createNoteTesst() {
-    this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: `New tag created` });
+    this.notificationService.createNewNotification({
+      id: uuidv4(),
+      type: NotificationType.SUCCESS,
+      message: `New tag created`,
+    });
   }
 }

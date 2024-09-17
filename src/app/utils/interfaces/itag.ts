@@ -22,5 +22,5 @@ export enum TagColors {
   ALIZARIN,
   AMETHYST,
   CONCRETE,
-  WETASPHALT
+  WETASPHALT,
 }

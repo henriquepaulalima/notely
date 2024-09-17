@@ -1,6 +1,24 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
-import { OrderObject, OrderType, OrderValue } from 'src/app/utils/interfaces/iorder';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+import {
+  FormGroup,
+  FormControl,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
+import {
+  OrderObject,
+  OrderType,
+  OrderValue,
+} from 'src/app/utils/interfaces/iorder';
 import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { ViewMode } from '../manage.component';
@@ -11,10 +29,9 @@ const body = document.querySelector('body');
 @Component({
   selector: 'app-content-header',
   templateUrl: './content-header.component.html',
-  styleUrls: ['./content-header.component.scss']
+  styleUrls: ['./content-header.component.scss'],
 })
 export class ContentHeaderComponent implements OnInit {
-
   @Input() manageTypeIsTag: boolean = false;
   @Input() viewMode!: ViewMode;
   @Input() reloadTagList!: Subject<void>;
@@ -34,26 +51,26 @@ export class ContentHeaderComponent implements OnInit {
 
   constructor(
     private renderer: Renderer2,
-    private tagService: TagService
+    private tagService: TagService,
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
         this.toggleOptionsModal();
       }
-    })
+    });
   }
 
   ngOnInit(): void {
     this.searchTextInput = new FormControl<string>('', [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(20)
+      Validators.maxLength(20),
     ]);
 
     this.filterTagInput = new FormControl<ITag | null>(null, [
       Validators.required,
       Validators.minLength(3),
-      Validators.maxLength(20)
+      Validators.maxLength(20),
     ]);
 
     this.listOrder = new FormGroup({
@@ -64,7 +81,7 @@ export class ContentHeaderComponent implements OnInit {
 
     this.loadTagList();
 
-    this.reloadTagList.subscribe(() => this.loadTagList())
+    this.reloadTagList.subscribe(() => this.loadTagList());
   }
 
   get noteTitle(): AbstractControl<OrderValue> | null | undefined {
@@ -108,7 +125,9 @@ export class ContentHeaderComponent implements OnInit {
     this.viewModeChanged.emit();
   }
 
-  public changeOrder(field: AbstractControl<OrderValue> | null | undefined): void {
+  public changeOrder(
+    field: AbstractControl<OrderValue> | null | undefined,
+  ): void {
     switch (field?.value) {
       case 0:
         field.setValue(1);
@@ -140,7 +159,7 @@ export class ContentHeaderComponent implements OnInit {
 
     this.sendNewOrder.emit({
       type: orderType,
-      value: field.value
+      value: field.value,
     });
   }
 
@@ -160,7 +179,7 @@ export class ContentHeaderComponent implements OnInit {
 
       this.filterList.emit({
         text: this.searchTextInput.value,
-        tag: this.filterTagInput.value
+        tag: this.filterTagInput.value,
       });
     }, 500);
   }
@@ -168,7 +187,7 @@ export class ContentHeaderComponent implements OnInit {
   public sendSearchInputValue(): void {
     this.filterList.emit({
       text: this.searchTextInput.value,
-      tag: this.filterTagInput.value
+      tag: this.filterTagInput.value,
     });
   }
 

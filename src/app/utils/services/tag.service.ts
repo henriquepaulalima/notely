@@ -2,11 +2,10 @@ import { Injectable } from '@angular/core';
 import { ITag, ITagColor, TagColors } from '../interfaces/itag';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class TagService {
-
-  constructor() { }
+  constructor() {}
 
   public saveNewTagsArray(tagsArray: ITag[]): void {
     localStorage.setItem('tags', JSON.stringify(tagsArray));
@@ -35,7 +34,9 @@ export class TagService {
     const lowerTest = text?.toLowerCase();
 
     if (lowerTest) {
-      filteredNotes = filteredNotes.filter(item => item.name.toLowerCase().indexOf(lowerTest) > -1);
+      filteredNotes = filteredNotes.filter(
+        (item) => item.name.toLowerCase().indexOf(lowerTest) > -1,
+      );
     }
 
     return filteredNotes;
@@ -44,13 +45,13 @@ export class TagService {
   public editTag(tag: ITag): void {
     const tags = this.getAllTags();
 
-    const tagsToEdit = tags.find(x => x.id === tag.id)
+    const tagsToEdit = tags.find((x) => x.id === tag.id);
 
     if (tagsToEdit) {
-      const tagToEditIndex = tags.indexOf(tagsToEdit)
+      const tagToEditIndex = tags.indexOf(tagsToEdit);
       tags[tagToEditIndex] = tag;
       this.saveNewTagsArray(tags);
-    };
+    }
   }
 
   public deleteTag(tagId: string): void {
@@ -58,7 +59,7 @@ export class TagService {
       throw new Error('Tag iD is not valid');
     } else {
       const tags = this.getAllTags();
-      const tagToDelete = tags.find(tag => tag.id === tagId);
+      const tagToDelete = tags.find((tag) => tag.id === tagId);
 
       if (tagToDelete) {
         const tagToDeleteIndex = tags.indexOf(tagToDelete);
@@ -70,8 +71,9 @@ export class TagService {
   }
 
   public isUUIDValid(uuid: string): boolean {
-    const valididRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return (valididRegex.test(uuid));
+    const valididRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return valididRegex.test(uuid);
   }
 
   public getSingleTagColor(tagColor: TagColors): string {
@@ -104,48 +106,48 @@ export class TagService {
       {
         id: TagColors.PETERRIVER,
         name: 'PETERRIVER',
-        color: '#3498DB'
+        color: '#3498DB',
       },
       {
         id: TagColors.EMERALD,
         name: 'EMERALD',
-        color: '#2ECC71'
+        color: '#2ECC71',
       },
       {
         id: TagColors.TURQUOISE,
         name: 'TURQUOISE',
-        color: '#1ABC9C'
+        color: '#1ABC9C',
       },
       {
         id: TagColors.AMBER,
         name: 'AMBER',
-        color: '#F0A30A'
+        color: '#F0A30A',
       },
       {
         id: TagColors.CARROT,
         name: 'CARROT',
-        color: '#E67E22'
+        color: '#E67E22',
       },
       {
         id: TagColors.ALIZARIN,
         name: 'ALIZARIN',
-        color: '#E74C3C'
+        color: '#E74C3C',
       },
       {
         id: TagColors.AMETHYST,
         name: 'AMETHYST',
-        color: '#9B59B6'
+        color: '#9B59B6',
       },
       {
         id: TagColors.CONCRETE,
         name: 'CONCRETE',
-        color: '#95A5A6'
+        color: '#95A5A6',
       },
       {
         id: TagColors.WETASPHALT,
         name: 'WETASPHALT',
-        color: '#34495E'
+        color: '#34495E',
       },
-    ]
+    ];
   }
 }

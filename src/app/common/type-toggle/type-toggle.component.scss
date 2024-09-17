@@ -39,6 +39,7 @@
         color: $dark_grey;
         transition: color 0.3s;
       }
+
       &:last-child {
         color: $white;
         transition: color 0.3s;
@@ -54,6 +55,7 @@
     color: $white;
     transition: color 0.3s;
   }
+
   input:checked + label div:last-child {
     color: $dark_grey;
     transition: color 0.3s;

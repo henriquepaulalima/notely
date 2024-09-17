@@ -38,7 +38,8 @@
           border: 2px solid $dark_grey;
           border-radius: 10px;
           background-color: $light_yellow;
-          box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+          box-shadow:
+            rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
             rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
           font-size: 1rem;
           color: $dark_yellow;
@@ -67,10 +68,10 @@
           transition: 0.15s ease;
         }
 
-        input:focus+label,
-        textarea:focus+label,
-        input:not(:placeholder-shown)+label,
-        textarea:not(:placeholder-shown)+label {
+        input:focus + label,
+        textarea:focus + label,
+        input:not(:placeholder-shown) + label,
+        textarea:not(:placeholder-shown) + label {
           top: 10px;
         }
 
@@ -148,7 +149,8 @@
         border: 2px solid $dark_grey;
         border-radius: 10px;
         background-color: $light_yellow;
-        box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+        box-shadow:
+          rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
           rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
         font-size: 1rem;
         color: $dark_yellow;
@@ -209,7 +211,6 @@
   }
 }
 
-
 .color_picker_modal__container {
   display: flex;
   flex-direction: column;
@@ -218,7 +219,7 @@
   position: absolute;
   height: 100vh;
   width: 100vw;
-  background-color: rgba($color: $dark_grey, $alpha: .75);
+  background-color: rgba($color: $dark_grey, $alpha: 0.75);
   z-index: 1;
 
   .color_picker_modal__block {
@@ -234,10 +235,10 @@
     border-radius: 10px;
     background: $white;
     padding: 1rem;
-    animation: move .75s ease-in-out forwards;
+    animation: move 0.75s ease-in-out forwards;
 
     &.close {
-      animation: moveout .5s ease-in-out forwards;
+      animation: moveout 0.5s ease-in-out forwards;
     }
 
     @keyframes move {
@@ -292,7 +293,7 @@
         height: 30%;
         border: none;
         border-radius: 10px;
-        transition: .25s ease-in-out;
+        transition: 0.25s ease-in-out;
 
         &:active {
           transform: scale(75%);

@@ -1,56 +1,99 @@
 <div class="manage__list_header">
-  <button (click)="toggleOptionsModal();"><i class="fa-solid fa-ellipsis"></i></button>
-  <div class=manage__serach_input_container>
-    <input (input)="sendSearchInputValue();" [formControl]="searchTextInput" type="text" name="search" id="search"
-      placeholder="Search">
+  <button (click)="toggleOptionsModal()">
+    <i class="fa-solid fa-ellipsis"></i>
+  </button>
+  <div class="manage__serach_input_container">
+    <input
+      (input)="sendSearchInputValue()"
+      [formControl]="searchTextInput"
+      type="text"
+      name="search"
+      id="search"
+      placeholder="Search"
+    />
     <label *ngIf="!searchTextInput.value" for="search">
       <i class="fa-solid fa-magnifying-glass"></i>
     </label>
-    <label (click)="clearSearchInput();" *ngIf="searchTextInput.value" for="search">
+    <label
+      (click)="clearSearchInput()"
+      *ngIf="searchTextInput.value"
+      for="search"
+    >
       <i class="fa-solid fa-xmark"></i>
     </label>
   </div>
 </div>
 
-<div *ngIf="showOptionsModal" [ngStyle]="{'top': screenTop + 'px'}" class="options_modal__container" #modalOverlayEl>
+<div
+  *ngIf="showOptionsModal"
+  [ngStyle]="{ top: screenTop + 'px' }"
+  class="options_modal__container"
+  #modalOverlayEl
+>
   <div class="options_modal__block" #modalBlockEl>
-    <i (click)="toggleOptionsModal();" class="fa-solid fa-xmark"></i>
+    <i (click)="toggleOptionsModal()" class="fa-solid fa-xmark"></i>
     <h2>Options</h2>
     <div class="options_modal__content_container">
       <h3>View mode</h3>
-      <button (click)="changeViewMode();" class="options_modal__view_mode_btn">
-        <p>{{ viewMode === 0 ? 'List' : 'Grid' }}</p>
+      <button (click)="changeViewMode()" class="options_modal__view_mode_btn">
+        <p>{{ viewMode === 0 ? "List" : "Grid" }}</p>
         <i [class.hide]="viewMode !== 0" class="fa-solid fa-list"></i>
         <i [class.hide]="viewMode !== 1" class="fa-solid fa-border-all"></i>
       </button>
     </div>
     <div class="options_modal__content_container">
-      <h3>Order {{ manageTypeIsTag ? 'tags' : 'notes' }}</h3>
-      <button *ngIf="!manageTypeIsTag" (click)="changeOrder(noteTitle);" [class.active]="activeOrderType === 0" class="options_modal__order_button">
+      <h3>Order {{ manageTypeIsTag ? "tags" : "notes" }}</h3>
+      <button
+        *ngIf="!manageTypeIsTag"
+        (click)="changeOrder(noteTitle)"
+        [class.active]="activeOrderType === 0"
+        class="options_modal__order_button"
+      >
         <p>Title</p>
-        <i [class.down]="noteTitle?.value === 1" class="fa-solid fa-arrow-up"></i>
+        <i
+          [class.down]="noteTitle?.value === 1"
+          class="fa-solid fa-arrow-up"
+        ></i>
       </button>
-      <button *ngIf="manageTypeIsTag" (click)="changeOrder(tagName);" [class.active]="activeOrderType === 1" class="options_modal__order_button">
+      <button
+        *ngIf="manageTypeIsTag"
+        (click)="changeOrder(tagName)"
+        [class.active]="activeOrderType === 1"
+        class="options_modal__order_button"
+      >
         <p>Name</p>
         <i [class.down]="tagName?.value === 1" class="fa-solid fa-arrow-up"></i>
       </button>
-      <button (click)="changeOrder(createdAt);" [class.active]="activeOrderType === 2" class="options_modal__order_button">
+      <button
+        (click)="changeOrder(createdAt)"
+        [class.active]="activeOrderType === 2"
+        class="options_modal__order_button"
+      >
         <p>Created date</p>
-        <i [class.down]="createdAt?.value === 1" class="fa-solid fa-arrow-up"></i>
+        <i
+          [class.down]="createdAt?.value === 1"
+          class="fa-solid fa-arrow-up"
+        ></i>
       </button>
     </div>
     <div *ngIf="!manageTypeIsTag" class="options_modal__content_container">
       <h3>Filter notes by tag</h3>
       <div class="options_modal__tag_filter_list">
-        <span *ngFor="let item of tags" (click)="filterByTag(item)" class="options_modal__tag"
-          [ngStyle]="{ 'background-color': getTagColor(item.color)}"
-          [class.options_modal__tag_active]="filterTagInput.value === item">
+        <span
+          *ngFor="let item of tags"
+          (click)="filterByTag(item)"
+          class="options_modal__tag"
+          [ngStyle]="{ 'background-color': getTagColor(item.color) }"
+          [class.options_modal__tag_active]="filterTagInput.value === item"
+        >
           {{ item.name }}
         </span>
       </div>
       <div *ngIf="tags.length === 0" class="options_modal__no_tag_warning">
         <p>No tags found</p>
-        <p routerLink="/create/tag" class="options_modal__no_tag_warning_link">Create a new tag</p>
+        <p routerLink="/create/tag" class="options_modal__no_tag_warning_link">
+          Create a new tag
+        </p>
       </div>
     </div>
   </div>

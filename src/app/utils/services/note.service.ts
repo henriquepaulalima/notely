@@ -6,7 +6,6 @@ import { ITag } from '../interfaces/itag';
   providedIn: 'root',
 })
 export class NoteService {
-
   constructor() {}
 
   public saveNewNotesArray(notesArray: INote[]): void {
@@ -36,11 +35,17 @@ export class NoteService {
     const lowerText = text?.toLowerCase();
 
     if (lowerText) {
-      filteredNotes = filteredNotes.filter(item => (item.title.toLowerCase().indexOf(lowerText) > -1) || (item.content.toLowerCase().indexOf(lowerText) > -1));
+      filteredNotes = filteredNotes.filter(
+        (item) =>
+          item.title.toLowerCase().indexOf(lowerText) > -1 ||
+          item.content.toLowerCase().indexOf(lowerText) > -1,
+      );
     }
 
     if (tag) {
-      filteredNotes = filteredNotes.filter(item => item.tags.some(itemTag => itemTag == tag.id));
+      filteredNotes = filteredNotes.filter((item) =>
+        item.tags.some((itemTag) => itemTag == tag.id),
+      );
     }
 
     if (!lowerText && !tag) {
@@ -53,13 +58,13 @@ export class NoteService {
   public editNote(note: INote): void {
     const notes = this.getAllNotes();
 
-    const noteToEdit = notes.find(x => x.id === note.id)
+    const noteToEdit = notes.find((x) => x.id === note.id);
 
     if (noteToEdit) {
-      const noteToEditIndex = notes.indexOf(noteToEdit)
+      const noteToEditIndex = notes.indexOf(noteToEdit);
       notes[noteToEditIndex] = note;
       this.saveNewNotesArray(notes);
-    };
+    }
   }
 
   public deleteNote(noteId: string): void {
@@ -67,7 +72,7 @@ export class NoteService {
       throw new Error('Note iD is not valid');
     } else {
       const notes = this.getAllNotes();
-      const noteToDelete = notes.find(note => note.id === noteId);
+      const noteToDelete = notes.find((note) => note.id === noteId);
 
       if (noteToDelete) {
         const noteToDeleteIndex = notes.indexOf(noteToDelete);
@@ -79,7 +84,8 @@ export class NoteService {
   }
 
   public isUUIDValid(uuid: string): boolean {
-    const valididRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return (valididRegex.test(uuid));
+    const valididRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-5][0-9a-f]{3}-[089ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    return valididRegex.test(uuid);
   }
 }

@@ -1,5 +1,19 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  Renderer2,
+  ViewChild,
+} from '@angular/core';
+import {
+  AbstractControl,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { INote } from 'src/app/utils/interfaces/inote';
 import { NotificationType } from 'src/app/utils/interfaces/inotification';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
@@ -13,10 +27,9 @@ const body = document.querySelector('body');
 @Component({
   selector: 'app-manage-modal',
   templateUrl: './manage-modal.component.html',
-  styleUrls: ['./manage-modal.component.scss']
+  styleUrls: ['./manage-modal.component.scss'],
 })
 export class ManageModalComponent implements OnInit {
-
   @Input() typeIsTag: boolean = false;
   @Input() data!: INote | ITag;
   @Input() screenTop: number = 0;
@@ -41,13 +54,13 @@ export class ManageModalComponent implements OnInit {
     private renderer: Renderer2,
     private noteService: NoteService,
     private tagService: TagService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
         this.startHideModal();
       }
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -57,7 +70,10 @@ export class ManageModalComponent implements OnInit {
       this.tagData = this.data as ITag;
       this.tagForm = new FormGroup({
         name: new FormControl<string>(this.tagData.name, Validators.required),
-        color: new FormControl<TagColors>(this.tagData.color, Validators.required)
+        color: new FormControl<TagColors>(
+          this.tagData.color,
+          Validators.required,
+        ),
       });
 
       this.initialFormData = this.tagForm.value;
@@ -69,8 +85,14 @@ export class ManageModalComponent implements OnInit {
     } else {
       this.noteData = this.data as INote;
       this.noteForm = new FormGroup({
-        title: new FormControl<string>(this.noteData.title, Validators.required),
-        content: new FormControl<string>(this.noteData.content, Validators.required)
+        title: new FormControl<string>(
+          this.noteData.title,
+          Validators.required,
+        ),
+        content: new FormControl<string>(
+          this.noteData.content,
+          Validators.required,
+        ),
       });
 
       this.initialFormData = this.noteForm.value;
@@ -95,7 +117,7 @@ export class ManageModalComponent implements OnInit {
 
   public toggleEditForm(): void {
     if (this.editingForm) {
-      this.editingForm = false
+      this.editingForm = false;
       if (this.typeIsTag) {
         this.tagForm.get('name')?.disable();
         this.tagForm.get('color')?.disable();
@@ -106,7 +128,7 @@ export class ManageModalComponent implements OnInit {
         this.noteForm.setValue(this.initialFormData);
       }
     } else {
-      if(this.typeIsTag) {
+      if (this.typeIsTag) {
         this.editingForm = true;
         this.tagForm.get('name')?.enable();
         this.tagForm.get('color')?.enable();
@@ -134,7 +156,7 @@ export class ManageModalComponent implements OnInit {
         color: this.tagColor?.value,
         createdAt: this.tagData.createdAt,
         updatedAt: new Date(),
-        active: true
+        active: true,
       };
 
       try {
@@ -142,12 +164,19 @@ export class ManageModalComponent implements OnInit {
         this.reloadList.emit();
         this.startHideModal();
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Tag edited' });
-      }
-      catch(error) {
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.SUCCESS,
+          message: 'Tag edited',
+        });
+      } catch (error) {
         console.error(error);
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not edit tag' });
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.ERROR,
+          message: 'Could not edit tag',
+        });
       }
     } else {
       const noteToEditData: INote = {
@@ -157,7 +186,7 @@ export class ManageModalComponent implements OnInit {
         tags: this.noteData.tags,
         createdAt: this.noteData.createdAt,
         updatedAt: new Date(),
-        active: true
+        active: true,
       };
 
       try {
@@ -165,12 +194,19 @@ export class ManageModalComponent implements OnInit {
         this.reloadList.emit();
         this.startHideModal();
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Note edited' });
-      }
-      catch(error) {
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.SUCCESS,
+          message: 'Note edited',
+        });
+      } catch (error) {
         console.error(error);
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not edit note' });
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.ERROR,
+          message: 'Could not edit note',
+        });
       }
     }
   }
@@ -182,12 +218,19 @@ export class ManageModalComponent implements OnInit {
         this.reloadList.emit();
         this.startHideModal();
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Tag deleted' });
-      }
-      catch(error) {
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.SUCCESS,
+          message: 'Tag deleted',
+        });
+      } catch (error) {
         console.error(error);
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not delete tag' });
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.ERROR,
+          message: 'Could not delete tag',
+        });
       }
     } else {
       try {
@@ -195,12 +238,19 @@ export class ManageModalComponent implements OnInit {
         this.reloadList.emit();
         this.startHideModal();
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Note deleted' });
-      }
-      catch(error) {
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.SUCCESS,
+          message: 'Note deleted',
+        });
+      } catch (error) {
         console.error(error);
 
-        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not delete note' });
+        this.notificationService.createNewNotification({
+          id: uuidv4(),
+          type: NotificationType.ERROR,
+          message: 'Could not delete note',
+        });
       }
     }
   }

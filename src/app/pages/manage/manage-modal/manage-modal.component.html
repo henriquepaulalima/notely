@@ -1,68 +1,124 @@
-<div *ngIf="showModal" [ngStyle]="{'top': screenTop + 'px'}" class="manage_modal__container" #modalOverlayEl>
+<div
+  *ngIf="showModal"
+  [ngStyle]="{ top: screenTop + 'px' }"
+  class="manage_modal__container"
+  #modalOverlayEl
+>
   <div class="manage_modal__block" #modalBlockEl>
-    <h2>Manage {{ typeIsTag ? 'Tag' : 'Note' }}</h2>
-    <form *ngIf="!typeIsTag" [formGroup]="this.noteForm" class="manage_modal__form">
+    <h2>Manage {{ typeIsTag ? "Tag" : "Note" }}</h2>
+    <form
+      *ngIf="!typeIsTag"
+      [formGroup]="this.noteForm"
+      class="manage_modal__form"
+    >
       <div class="manage_modal__form_inputs">
         <div class="manage_modal__form_input_container">
           <label for="note_title">Title</label>
-          <input (input)="checkFormChange(noteForm);" formControlName="title" type="text" name="note_title"
-            id="note_title">
+          <input
+            (input)="checkFormChange(noteForm)"
+            formControlName="title"
+            type="text"
+            name="note_title"
+            id="note_title"
+          />
         </div>
         <div class="manage_modal__form_input_container">
           <label for="note_content">Content</label>
-          <input (input)="checkFormChange(noteForm);" formControlName="content" type="text" name="note_content"
-            id="note_content">
+          <input
+            (input)="checkFormChange(noteForm)"
+            formControlName="content"
+            type="text"
+            name="note_content"
+            id="note_content"
+          />
         </div>
         <ng-container *ngIf="!editingForm">
           <div class="manage_modal__form_date_container">
             <label>Created at</label>
-            <p>{{ noteData.createdAt | date: 'dd/MM/YYYY' }}</p>
+            <p>{{ noteData.createdAt | date: "dd/MM/YYYY" }}</p>
           </div>
           <div class="manage_modal__form_date_container">
             <label>Updated at</label>
-            <p>{{ noteData.updatedAt | date: 'dd/MM/YYYY' }}</p>
+            <p>{{ noteData.updatedAt | date: "dd/MM/YYYY" }}</p>
           </div>
         </ng-container>
       </div>
     </form>
-    <form *ngIf="typeIsTag" [formGroup]="this.tagForm" class="manage_modal__form">
+    <form
+      *ngIf="typeIsTag"
+      [formGroup]="this.tagForm"
+      class="manage_modal__form"
+    >
       <div class="manage_modal__form_inputs">
         <div class="manage_modal__form_input_container">
           <label for="tag_name">Name</label>
-          <input (input)="checkFormChange(tagForm);" formControlName="name" type="text" name="tag_name"
-            id="tag_name">
+          <input
+            (input)="checkFormChange(tagForm)"
+            formControlName="name"
+            type="text"
+            name="tag_name"
+            id="tag_name"
+          />
         </div>
-        <div [class.has_color_picker]="editingTagColor" class="manage_modal__form_input_container">
+        <div
+          [class.has_color_picker]="editingTagColor"
+          class="manage_modal__form_input_container"
+        >
           <label for="tag_color">Color</label>
-          <span (click)="editingTagColor = true" [ngStyle]="{ 'background-color': getTagColor(tagColor?.value) }" [class.hide]="editingTagColor" [class.disabled]="!editingForm" class="manage_modal__current_tag_color">
+          <span
+            (click)="editingTagColor = true"
+            [ngStyle]="{ 'background-color': getTagColor(tagColor?.value) }"
+            [class.hide]="editingTagColor"
+            [class.disabled]="!editingForm"
+            class="manage_modal__current_tag_color"
+          >
             <i *ngIf="editingForm" class="fa-solid fa-pen-to-square"></i>
           </span>
           <div [class.hide]="!editingTagColor" class="color_picker__list">
-            <span *ngFor="let item of tagColors" (click)="pickColor(item.id)" [ngStyle]="{ 'background-color': item.color }"
-              [class.color_picker_modal__item_active]="item.id === tagData.color" [id]="item.name"
-              class="color_picker__item"></span>
+            <span
+              *ngFor="let item of tagColors"
+              (click)="pickColor(item.id)"
+              [ngStyle]="{ 'background-color': item.color }"
+              [class.color_picker_modal__item_active]="
+                item.id === tagData.color
+              "
+              [id]="item.name"
+              class="color_picker__item"
+            ></span>
           </div>
         </div>
         <ng-container *ngIf="!editingForm">
           <div class="manage_modal__form_date_container">
             <label>Created at</label>
-            <p>{{ tagData.createdAt | date: 'dd/MM/YYYY' }}</p>
+            <p>{{ tagData.createdAt | date: "dd/MM/YYYY" }}</p>
           </div>
           <div class="manage_modal__form_date_container">
             <label>Updated at</label>
-            <p>{{ tagData.updatedAt | date: 'dd/MM/YYYY' }}</p>
+            <p>{{ tagData.updatedAt | date: "dd/MM/YYYY" }}</p>
           </div>
         </ng-container>
       </div>
     </form>
     <div *ngIf="!editingForm" class="manage_modal__buttons_container">
-      <button (click)="startHideModal();" class="manage_modal__cancel_button">Close</button>
-      <button (click)="toggleEditForm();" *ngIf="!editingForm">Edit</button>
+      <button (click)="startHideModal()" class="manage_modal__cancel_button">
+        Close
+      </button>
+      <button (click)="toggleEditForm()" *ngIf="!editingForm">Edit</button>
     </div>
     <div *ngIf="editingForm" class="manage_modal__buttons_container">
-      <button (click)="delete();" class="manage_modal__delete_button">Delete</button>
-      <button (click)="toggleEditForm();" class="manage_modal__cancel_button">Cancel</button>
-      <button (click)="save();" [disabled]="!formHasChanged" class="manaege_modal__save_button">Save</button>
+      <button (click)="delete()" class="manage_modal__delete_button">
+        Delete
+      </button>
+      <button (click)="toggleEditForm()" class="manage_modal__cancel_button">
+        Cancel
+      </button>
+      <button
+        (click)="save()"
+        [disabled]="!formHasChanged"
+        class="manaege_modal__save_button"
+      >
+        Save
+      </button>
     </div>
   </div>
 </div>

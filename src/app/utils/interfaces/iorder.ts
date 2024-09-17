@@ -5,14 +5,14 @@ export interface IOrder {
 }
 
 export interface OrderObject {
-  type: OrderType,
-  value: OrderValue
+  type: OrderType;
+  value: OrderValue;
 }
 
 export enum OrderType {
   NoteTitle,
   TagName,
-  CreatedAt
+  CreatedAt,
 }
 
 export enum OrderValue {

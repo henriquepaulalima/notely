@@ -1,4 +1,4 @@
-@import '/src/assets/styles/variables.scss';
+@import "/src/assets/styles/variables.scss";
 
 .home__container {
   height: 100vh;
@@ -6,9 +6,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: rgba($color: $light_yellow, $alpha: .75);
-
-
+  background: rgba($color: $light_yellow, $alpha: 0.75);
 
   .home__title {
     padding-bottom: 5rem;
@@ -23,7 +21,7 @@
     p {
       font-size: 1rem;
       font-weight: 400;
-      padding-top: .5rem;
+      padding-top: 0.5rem;
       line-height: 20px;
       color: $dark_blue;
     }
@@ -42,8 +40,10 @@
       border: none;
       border-radius: 15px;
       background-color: rgba($color: $medium_yellow, $alpha: 1);
-      box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
-      transition: .25s ease;
+      box-shadow:
+        rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+        rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      transition: 0.25s ease;
 
       &:active {
         transform: scale(80%);

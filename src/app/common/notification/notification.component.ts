@@ -1,22 +1,27 @@
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from '@angular/core';
 import { INotification } from 'src/app/utils/interfaces/inotification';
 import { NotificationService } from 'src/app/utils/services/notification.service';
 
 @Component({
   selector: 'app-notification',
   templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss']
+  styleUrls: ['./notification.component.scss'],
 })
 export class NotificationComponent implements OnInit {
-
   public notifications: INotification[] = [];
 
-  constructor(
-    private notificationService: NotificationService
-  ) { }
+  constructor(private notificationService: NotificationService) {}
 
   ngOnInit(): void {
-    this.notificationService.addNewNotification.subscribe(notification => {
+    this.notificationService.addNewNotification.subscribe((notification) => {
       if (notification) this.notify(notification);
     });
   }

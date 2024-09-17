@@ -11,10 +11,9 @@ import { Subject } from 'rxjs';
 @Component({
   selector: 'app-manage',
   templateUrl: './manage.component.html',
-  styleUrls: ['./manage.component.scss']
+  styleUrls: ['./manage.component.scss'],
 })
 export class ManageComponent implements OnInit {
-
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
@@ -30,7 +29,7 @@ export class ManageComponent implements OnInit {
   constructor(
     private noteService: NoteService,
     private tagService: TagService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
   ) {
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const type = params.get('type');
@@ -78,7 +77,10 @@ export class ManageComponent implements OnInit {
     if (this.manageTypeIsTag) {
       this.tags = this.tagService.getFilteredTags(filterObj.text);
     } else {
-      this.notes = this.noteService.getFilteredNotes(filterObj.text, filterObj.tag);
+      this.notes = this.noteService.getFilteredNotes(
+        filterObj.text,
+        filterObj.tag,
+      );
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -103,10 +105,12 @@ export class ManageComponent implements OnInit {
       case OrderType.NoteTitle:
         if (orderObj.value === 0) {
           this.notes = this.notes.sort((a, b) =>
-            a.title.localeCompare(b.title));
+            a.title.localeCompare(b.title),
+          );
         } else if (orderObj.value === 1) {
           this.notes = this.notes.sort((a, b) =>
-            b.title.localeCompare(a.title));
+            b.title.localeCompare(a.title),
+          );
         }
         break;
       case OrderType.TagName:
@@ -118,17 +122,25 @@ export class ManageComponent implements OnInit {
         break;
       case OrderType.CreatedAt:
         if (!this.manageTypeIsTag && orderObj.value === 0) {
-          this.notes = this.notes.sort((a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          this.notes = this.notes.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          );
         } else if (!this.manageTypeIsTag && orderObj.value === 1) {
-          this.notes = this.notes.sort((a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          this.notes = this.notes.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
         } else if (this.manageTypeIsTag && orderObj.value === 0) {
-          this.tags = this.tags.sort((a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+          this.tags = this.tags.sort(
+            (a, b) =>
+              new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+          );
         } else if (this.manageTypeIsTag && orderObj.value === 1) {
-          this.tags = this.tags.sort((a, b) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+          this.tags = this.tags.sort(
+            (a, b) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+          );
         }
         break;
       default:

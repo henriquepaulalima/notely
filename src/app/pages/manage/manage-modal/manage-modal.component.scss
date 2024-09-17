@@ -8,7 +8,7 @@
   position: absolute;
   height: 100dvh;
   width: 100vw;
-  background-color: rgba($color: $dark_grey, $alpha: .75);
+  background-color: rgba($color: $dark_grey, $alpha: 0.75);
   z-index: 1;
 
   .manage_modal__block {
@@ -24,10 +24,10 @@
     border-radius: 10px;
     background: $white;
     padding: 1rem;
-    animation: moveFromBottom .75s ease-in-out forwards;
+    animation: moveFromBottom 0.75s ease-in-out forwards;
 
     &.close {
-      animation: moveFromBottomOut .5s ease-in-out forwards;
+      animation: moveFromBottomOut 0.5s ease-in-out forwards;
     }
 
     @keyframes moveFromBottom {
@@ -87,7 +87,7 @@
           }
 
           label {
-            padding-bottom: .5rem;
+            padding-bottom: 0.5rem;
           }
 
           input {
@@ -108,7 +108,7 @@
             width: 100%;
             border-radius: 7px;
             padding: 1rem;
-            transition: .25s ease-in-out;
+            transition: 0.25s ease-in-out;
 
             &.disabled {
               pointer-events: none;
@@ -133,7 +133,7 @@
             flex-wrap: wrap;
             row-gap: 10px;
             column-gap: 10px;
-            transition: .25s ease-in-out;
+            transition: 0.25s ease-in-out;
 
             &.hide {
               height: 0%;
@@ -144,14 +144,18 @@
               height: 30%;
               border: none;
               border-radius: 10px;
-              transition: .25s ease-in-out;
+              transition: 0.25s ease-in-out;
 
               &:active {
                 transform: scale(75%);
               }
 
               &.color_picker_modal__item_active {
-                box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+                box-shadow:
+                  inset -3px 0 0 $dark_grey,
+                  inset 0 -3px 0 $dark_grey,
+                  inset 3px 0 0 $dark_grey,
+                  inset 0 3px 0 $dark_grey;
               }
             }
           }
@@ -196,12 +200,16 @@
         padding: 1rem 0;
 
         &[disabled] {
-          opacity: .75;
+          opacity: 0.75;
         }
 
         &.manage_modal__cancel_button {
           background: transparent;
-          box-shadow: inset -3px 0 0 $dark_grey, inset 0 -3px 0 $dark_grey, inset 3px 0 0 $dark_grey, inset 0 3px 0 $dark_grey;
+          box-shadow:
+            inset -3px 0 0 $dark_grey,
+            inset 0 -3px 0 $dark_grey,
+            inset 3px 0 0 $dark_grey,
+            inset 0 3px 0 $dark_grey;
           color: $dark_grey;
         }
 

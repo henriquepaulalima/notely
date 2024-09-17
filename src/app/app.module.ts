@@ -25,15 +25,10 @@ import { NotificationComponent } from './common/notification/notification.compon
     ManageComponent,
     ContentHeaderComponent,
     ManageModalComponent,
-    NotificationComponent
+    NotificationComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ReactiveFormsModule,
-    FormsModule
-  ],
+  imports: [BrowserModule, AppRoutingModule, ReactiveFormsModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
