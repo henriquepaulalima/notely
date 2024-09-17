@@ -61,7 +61,7 @@
 
     &.showMenu {
       z-index: 2;
-      height: 5rem;
+      height: 7rem;
       opacity: 1;
     }
 
@@ -75,7 +75,7 @@
       cursor: pointer;
       transition: 0.25s ease;
 
-      &:first-child {
+      &:not(:last-child) {
         border-bottom: 1px solid $light_grey;
       }
     }
