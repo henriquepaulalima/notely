@@ -31,12 +31,12 @@
 
     .manage__list {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
       padding: 1.5rem;
 
       &.list_view {
-        grid-template-columns: 1fr;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
 
         .manage__item {
           height: 7rem;
@@ -84,6 +84,7 @@
         }
 
         .manage__item_info {
+          width: 100%;
           display: flex;
           flex-direction: column;
           justify-content: space-between;
@@ -96,13 +97,11 @@
           }
 
           p {
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
             font-size: 1rem;
             font-weight: 400;
             color: $medium_grey;
+            overflow: hidden;
+            text-overflow: ellipsis;
           }
         }
 

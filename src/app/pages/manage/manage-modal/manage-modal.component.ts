@@ -1,9 +1,12 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
 import { AbstractControl, FormControl, FormGroup, Validators } from '@angular/forms';
 import { INote } from 'src/app/utils/interfaces/inote';
+import { NotificationType } from 'src/app/utils/interfaces/inotification';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
+import { NotificationService } from 'src/app/utils/services/notification.service';
 import { TagService } from 'src/app/utils/services/tag.service';
+import { v4 as uuidv4 } from 'uuid';
 
 const body = document.querySelector('body');
 
@@ -37,7 +40,8 @@ export class ManageModalComponent implements OnInit {
   constructor(
     private renderer: Renderer2,
     private noteService: NoteService,
-    private tagService: TagService
+    private tagService: TagService,
+    private notificationService: NotificationService
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
@@ -122,7 +126,7 @@ export class ManageModalComponent implements OnInit {
     }
   }
 
-  public save() {
+  public save(): void {
     if (this.typeIsTag) {
       const tagToEditData: ITag = {
         id: this.tagData.id,
@@ -133,7 +137,18 @@ export class ManageModalComponent implements OnInit {
         active: true
       };
 
-      this.tagService.editTag(tagToEditData);
+      try {
+        this.tagService.editTag(tagToEditData);
+        this.reloadList.emit();
+        this.startHideModal();
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Tag edited' });
+      }
+      catch(error) {
+        console.error(error);
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not edit tag' });
+      }
     } else {
       const noteToEditData: INote = {
         id: this.noteData.id,
@@ -145,22 +160,49 @@ export class ManageModalComponent implements OnInit {
         active: true
       };
 
-      this.noteService.editNote(noteToEditData);
-    }
+      try {
+        this.noteService.editNote(noteToEditData);
+        this.reloadList.emit();
+        this.startHideModal();
 
-    this.reloadList.emit();
-    this.startHideModal();
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Note edited' });
+      }
+      catch(error) {
+        console.error(error);
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not edit note' });
+      }
+    }
   }
 
   public delete(): void {
     if (this.typeIsTag) {
-      this.tagService.deleteTag(this.tagData.id);
-    } else {
-      this.noteService.deleteNote(this.noteData.id);
-    }
+      try {
+        this.tagService.deleteTag(this.tagData.id);
+        this.reloadList.emit();
+        this.startHideModal();
 
-    this.reloadList.emit();
-    this.startHideModal();
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Tag deleted' });
+      }
+      catch(error) {
+        console.error(error);
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not delete tag' });
+      }
+    } else {
+      try {
+        this.noteService.deleteNote(this.noteData.id);
+        this.reloadList.emit();
+        this.startHideModal();
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'Note deleted' });
+      }
+      catch(error) {
+        console.error(error);
+
+        this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not delete note' });
+      }
+    }
   }
 
   public getTagColor(tagColor: TagColors | null | undefined): string {

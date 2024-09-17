@@ -1,0 +1,12 @@
+<div *ngIf="notifications.length > 0" class="notification__container">
+  <div class="notification__list">
+    <div *ngFor="let notification of notifications; let i = index" (click)="hide(notification);" [id]="notification.id"
+      [ngStyle]="{ 'background-color': notification.type === 0 ? '#2ECC71' : '#E74C3C', 'top': (i+.5) * 13 + '%'}" class="notification__item">
+      <h3>{{ notification.type === 0 ? 'Success' : 'Error' }}</h3>
+      <p>{{ notification.message }}</p>
+      <div class="notification__progress_bar">
+        <span></span>
+      </div>
+    </div>
+  </div>
+</div>

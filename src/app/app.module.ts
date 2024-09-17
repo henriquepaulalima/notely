@@ -12,6 +12,7 @@ import { TypeToggleComponent } from './common/type-toggle/type-toggle.component'
 import { ManageComponent } from './pages/manage/manage.component';
 import { ContentHeaderComponent } from './pages/manage/content-header/content-header.component';
 import { ManageModalComponent } from './pages/manage/manage-modal/manage-modal.component';
+import { NotificationComponent } from './common/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { ManageModalComponent } from './pages/manage/manage-modal/manage-modal.c
     TypeToggleComponent,
     ManageComponent,
     ContentHeaderComponent,
-    ManageModalComponent
+    ManageModalComponent,
+    NotificationComponent
   ],
   imports: [
     BrowserModule,

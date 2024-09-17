@@ -7,8 +7,10 @@ import {
 } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { INote } from 'src/app/utils/interfaces/inote';
+import { NotificationType } from 'src/app/utils/interfaces/inotification';
 import { ITag, ITagColor, TagColors } from 'src/app/utils/interfaces/itag';
 import { NoteService } from 'src/app/utils/services/note.service';
+import { NotificationService } from 'src/app/utils/services/notification.service';
 import { TagService } from 'src/app/utils/services/tag.service';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -36,6 +38,7 @@ export class CreateComponent implements OnInit {
   constructor(
     private noteService: NoteService,
     private tagService: TagService,
+    private notificationService: NotificationService,
     private renderer: Renderer2,
     private activatedRoute: ActivatedRoute
   ) {
@@ -112,7 +115,7 @@ export class CreateComponent implements OnInit {
         this.noteTagsXref.push(tag);
       }
     } else {
-      throw new Error("Can't find tag in tag list");
+      throw new Error("Could not find tag in tag list");
     }
   }
 
@@ -136,8 +139,12 @@ export class CreateComponent implements OnInit {
     try {
       this.noteService.createNote(newNoteData);
       this.clearForm(this.noteForm);
+
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New note created' })
     } catch (error) {
       console.error(error);
+
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not create new note' });
     }
   }
 
@@ -157,8 +164,12 @@ export class CreateComponent implements OnInit {
       this.tagService.createTag(newTagData);
       this.clearForm(this.tagForm);
       this.tags = this.tagService.getAllTags();
+
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New tag created' });
     } catch (error) {
       console.error(error);
+
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not create new tag' });
     }
   }
 
@@ -190,5 +201,9 @@ export class CreateComponent implements OnInit {
     setTimeout(() => {
       this.toggleColorPickerModal();
     }, 250);
+  }
+
+  public createNoteTesst() {
+    this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: `New tag created` });
   }
 }

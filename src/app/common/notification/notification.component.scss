@@ -1,0 +1,79 @@
+@import "/src/assets/styles/variables.scss";
+
+.notification__container {
+  position: absolute;
+  top: 4%;
+  right: 5%;
+
+  .notification__list {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+
+    .notification__item {
+      position: fixed;
+      right: 5%;
+      height: auto;
+      min-width: 50%;
+      display: flex;
+      flex-direction: column;
+      border-radius: 7px;
+      color: $dark_grey;
+      z-index: 1;
+      animation: showNotification 1s ease-in-out;
+      transition: 1s ease-in-out;
+
+      &.hide {
+        animation: hideNotification 1s ease-in-out;
+      }
+
+      h3 {
+        font-size: 1.25rem;
+        font-weight: 500;
+        text-align: start;
+        padding: 1rem 1rem .5rem;
+      }
+
+      p {
+        font-size: 1rem;
+        font-weight: 400;
+        text-align: start;
+        padding: 0 1rem .5rem;
+      }
+
+      .notification__progress_bar {
+        height: 7px;
+        width: 100%;
+        border-bottom-left-radius: 7px;
+        border-bottom-right-radius: 7px;
+
+        span {
+          display: block;
+          height: 100%;
+          width: 0%;
+          background: $dark_grey;
+          border-bottom-left-radius: 7px;
+          border-bottom-right-radius: 7px;
+          animation: progress 5s ease-in-out;
+        }
+      }
+    }
+  }
+}
+
+@keyframes progress {
+  0% { width: 100%; }
+  100% { width: 0%; }
+}
+
+@keyframes showNotification {
+  0% { right: -75%; }
+  50% { right: 15%; }
+  100% { right: 5%; }
+}
+
+@keyframes hideNotification {
+  0% { right: 5%; }
+  50% { right: 15%; }
+  100% { right: -75%; }
+}
