@@ -1,4 +1,5 @@
 @import "/src/assets/styles/variables.scss";
+@import "/src/assets/styles/breakpoints.scss";
 
 .manage__list_header {
   position: sticky;
@@ -13,6 +14,14 @@
   backdrop-filter: blur(10px);
   padding: 1.5rem;
   z-index: 1;
+
+  @media (min-width: $laptop_breakpoint) {
+    padding: 1.5rem 25rem;
+  }
+
+  @media (min-width: $laptop_l_breakpoint) {
+    padding: 1.5rem 30rem;
+  }
 
   .manage__serach_input_container {
     position: relative;
@@ -83,7 +92,7 @@
   .options_modal__block {
     position: absolute;
     bottom: -57%;
-    left: 8%;
+    left: 50%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -93,9 +102,14 @@
     border: none;
     border-radius: 10px;
     background: $white;
-    padding: 1rem;
+    padding: 1.5rem;
     overflow: auto;
+    transform: translate(-50%, 0);
     animation: moveFromBottom 0.75s ease-in-out forwards;
+
+    @media (min-width: $laptop_breakpoint) {
+      width: 50%;
+    }
 
     &.close {
       animation: moveFromBottomOut 0.5s ease-in-out forwards;
