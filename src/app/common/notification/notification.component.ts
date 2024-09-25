@@ -41,4 +41,11 @@ export class NotificationComponent implements OnInit {
       this.notifications.splice(notificationIndex, 1);
     }, 1000);
   }
+
+  public getStyle(notification: INotification, index: number): object {
+    return {
+      'background-color': notification.type === 0 ? '#2ECC71' : '#E74C3C',
+      top: (index + 0.5) * 16 + '%',
+    };
+  }
 }

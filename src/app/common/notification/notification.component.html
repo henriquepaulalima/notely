@@ -4,10 +4,7 @@
       *ngFor="let notification of notifications; let i = index"
       (click)="hide(notification)"
       [id]="notification.id"
-      [ngStyle]="{
-        'background-color': notification.type === 0 ? '#2ECC71' : '#E74C3C',
-        top: (i + 0.5) * 13 + '%',
-      }"
+      [ngStyle]="getStyle(notification, i)"
       class="notification__item"
     >
       <h3>{{ notification.type === 0 ? "Success" : "Error" }}</h3>
