@@ -1,4 +1,5 @@
 @import "/src/assets/styles/variables.scss";
+@import "/src/assets/styles/breakpoints.scss";
 
 .create__container {
   min-height: 100vh;
@@ -11,16 +12,36 @@
     align-items: center;
     padding: 0 1.5rem;
 
+    @media (min-width: $laptop_breakpoint) {
+      padding: 0 25rem;
+    }
+
+    @media (min-width: $laptop_l_breakpoint) {
+      padding: 0 30rem;
+    }
+
     h1 {
       font-size: 2rem;
       font-weight: 500;
       color: $dark_grey;
       padding-bottom: 1rem;
     }
+
+    app-type-toggle {
+      width: 100%;
+    }
   }
 
   .create__page_content {
     padding: 1.5rem;
+
+    @media (min-width: $laptop_breakpoint) {
+      padding: 0 25rem 1.5rem;
+    }
+
+    @media (min-width: $laptop_l_breakpoint) {
+      padding: 0 30rem 1.5rem;
+    }
 
     .create_form__container {
       width: 100%;
@@ -53,6 +74,7 @@
 
         textarea {
           overflow: hidden;
+          resize: vertical;
         }
 
         label {
@@ -136,6 +158,25 @@
             &.create_form__tag_active {
               transform: scale(110%);
               opacity: 1;
+            }
+          }
+        }
+
+        .manage__list_no_item {
+          box-sizing: border-box;
+          width: 100%;
+          font-size: 1rem;
+          font-weight: 400;
+          text-align: center;
+          color: $dark_grey;
+
+          .manage__list_no_item_link {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: $blue_link;
+
+            &:active {
+              opacity: 0.75;
             }
           }
         }

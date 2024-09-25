@@ -2,7 +2,7 @@
   <app-header></app-header>
   <div class="create__page_header">
     <h1>Create new</h1>
-    <app-type-toggle [ngStyle]="{ width: '100%' }"></app-type-toggle>
+    <app-type-toggle></app-type-toggle>
   </div>
   <div class="create__page_content">
     <form
@@ -52,7 +52,7 @@
         </small>
       </div>
       <div class="create_form__tags_container">
-        <h2>Add to tag</h2>
+        <h2 *ngIf="tags.length > 0">Add to tag</h2>
         <div class="create_form__tag_list">
           <span
             *ngFor="let item of this.tags"
@@ -63,6 +63,12 @@
           >
             {{ item.name }}
           </span>
+        </div>
+        <div *ngIf="tags.length <= 0" class="manage__list_no_item">
+          <p>No tags found</p>
+          <p routerLink="/create/tag" class="manage__list_no_item_link">
+            Create a new tag
+          </p>
         </div>
       </div>
       <button
