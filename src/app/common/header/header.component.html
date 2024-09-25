@@ -1,11 +1,23 @@
 <header class="header__container">
-  <button (click)="this.toggleMenu()">
+  <button (click)="this.toggleMenu()" class="header__button">
     <i *ngIf="!this.showMenu" class="fa-solid fa-bars"></i>
     <i *ngIf="this.showMenu" class="fa-solid fa-xmark"></i>
   </button>
   <div [class.showMenu]="this.showMenu" class="header__dropdown" #dropdown>
-    <button (click)="navigateTo('/home')">Home</button>
-    <button (click)="navigateTo('/create/note')">Create</button>
-    <button (click)="navigateTo('/manage/note')">Manage</button>
+    <button routerLink="/home" (click)="toggleMenu()">Home</button>
+    <button
+      routerLink="/create/note"
+      routerLinkActive="active"
+      (click)="toggleMenu()"
+    >
+      Create
+    </button>
+    <button
+      routerLink="/manage/note"
+      routerLinkActive="active"
+      (click)="toggleMenu()"
+    >
+      Manage
+    </button>
   </div>
 </header>

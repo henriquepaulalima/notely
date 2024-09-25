@@ -1,5 +1,4 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -11,16 +10,13 @@ export class HeaderComponent {
 
   public showMenu: boolean = false;
 
-  constructor(private router: Router) {}
+  constructor() {}
 
   public toggleMenu(): void {
-    this.showMenu = !this.showMenu;
-  }
-
-  public navigateTo(url: string): void {
     if (this.showMenu) {
-      this.toggleMenu();
-      if (document.location.pathname != url) this.router.navigate([url]);
+      this.showMenu = false;
+    } else {
+      this.showMenu = true;
     }
   }
 }
