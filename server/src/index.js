@@ -12,6 +12,7 @@ const app = Fastify({ bodyLimit: 2 * 1024 * 1024 });
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
 app.addHook('onRequest', async (request, reply) => {
+  reply.header('Cache-Control', 'no-store');
   reply.header('Access-Control-Allow-Origin', origin);
   reply.header('Access-Control-Allow-Credentials', 'true');
   reply.header('Access-Control-Allow-Headers', 'Content-Type');
