@@ -1,0 +1,22 @@
+:host { display: block; position: relative; z-index: 10; }
+.header__container { background: var(--surface); border-bottom: 1px solid var(--line); }
+.header__inner { width: min(100% - 2rem, 1160px); min-height: 76px; margin: auto; display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; }
+.header__brand { display: inline-flex; align-items: center; gap: .65rem; color: var(--ink); text-decoration: none; font-size: 1.35rem; font-weight: 800; letter-spacing: -.055em; white-space: nowrap; }
+.header__brand_mark { display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .6rem; background: var(--accent); color: white; font-size: 1.1rem; letter-spacing: -.06em; transform: rotate(-8deg); }
+.header__brand_dot { color: var(--accent); }
+.header__button { order: 3; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--ink); font-size: 1.1rem; }
+.header__button i { transition: transform .22s ease; }
+.header__button.is-open i { transform: rotate(90deg); }
+.header__dropdown { order: 4; display: flex; flex-direction: column; gap: .35rem; position: absolute; top: 76px; left: 0; right: 0; max-height: 0; overflow: hidden; padding: 0 1rem; border-bottom: 1px solid transparent; background: var(--surface); box-shadow: none; visibility: hidden; opacity: 0; transform: translateY(-8px); pointer-events: none; transition: max-height .28s ease, padding .28s ease, opacity .2s ease, transform .28s ease, border-color .28s ease, visibility .28s; }
+.header__dropdown.showMenu { max-height: 240px; padding: 1rem; border-color: var(--line); box-shadow: var(--shadow); visibility: visible; opacity: 1; transform: translateY(0); pointer-events: auto; }
+:host app-auth { order: 2; margin-left: auto; }
+.header__dropdown a { display: flex; align-items: center; min-height: 44px; padding: .65rem .9rem; border-radius: 10px; color: var(--muted); text-decoration: none; font-weight: 650; }
+.header__dropdown a:hover, .header__dropdown a.active { background: var(--accent-soft); color: var(--accent-strong); }
+@media (min-width: 760px) {
+  .header__inner { width: min(100% - 3rem, 1160px); }
+  .header__button { display: none; }
+  .header__dropdown, .header__dropdown.showMenu { order: 2; flex-direction: row; align-items: center; position: static; max-height: none; overflow: visible; margin-left: auto; gap: .25rem; padding: 0; border: 0; box-shadow: none; background: transparent; visibility: visible; opacity: 1; transform: none; pointer-events: auto; transition: none; }
+  .header__dropdown a { white-space: nowrap; }
+  :host app-auth { order: 3; margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { .header__button i, .header__dropdown { transition: none; } }

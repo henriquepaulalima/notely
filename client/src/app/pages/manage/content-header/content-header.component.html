@@ -1,0 +1,99 @@
+<div class="manage__list_header">
+  <button type="button" (click)="toggleOptionsModal()" aria-label="View options">
+    <i class="fa-solid fa-ellipsis"></i>
+  </button>
+  <div class="manage__serach_input_container">
+    <input
+      (input)="sendSearchInputValue()"
+      [formControl]="searchTextInput"
+      type="text"
+      name="search"
+      id="search"
+      placeholder="Search"
+    />
+    <label *ngIf="!searchTextInput.value" for="search">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </label>
+    <label
+      (click)="clearSearchInput()"
+      *ngIf="searchTextInput.value"
+      for="search"
+    >
+      <i class="fa-solid fa-xmark"></i>
+    </label>
+  </div>
+</div>
+
+<div
+  *ngIf="showOptionsModal"
+  class="options_modal__container"
+  #modalOverlayEl
+>
+  <div class="options_modal__block" #modalBlockEl role="dialog" aria-modal="true" aria-label="View options">
+    <button type="button" class="options_modal__close" (click)="toggleOptionsModal()" aria-label="Close options"><i class="fa-solid fa-xmark"></i></button>
+    <h2>Options</h2>
+    <div class="options_modal__content_container">
+      <h3>View mode</h3>
+      <button (click)="changeViewMode()" class="options_modal__view_mode_btn">
+        <p>{{ viewMode === 0 ? "List" : "Grid" }}</p>
+        <i [class.hide]="viewMode !== 0" class="fa-solid fa-list"></i>
+        <i [class.hide]="viewMode !== 1" class="fa-solid fa-border-all"></i>
+      </button>
+    </div>
+    <div class="options_modal__content_container">
+      <h3>Order {{ manageTypeIsTag ? "tags" : "notes" }}</h3>
+      <button
+        *ngIf="!manageTypeIsTag"
+        (click)="changeOrder(noteTitle)"
+        [class.active]="activeOrderType === 0"
+        class="options_modal__order_button"
+      >
+        <p>Title</p>
+        <i
+          [class.down]="noteTitle?.value === 1"
+          class="fa-solid fa-arrow-up"
+        ></i>
+      </button>
+      <button
+        *ngIf="manageTypeIsTag"
+        (click)="changeOrder(tagName)"
+        [class.active]="activeOrderType === 1"
+        class="options_modal__order_button"
+      >
+        <p>Name</p>
+        <i [class.down]="tagName?.value === 1" class="fa-solid fa-arrow-up"></i>
+      </button>
+      <button
+        (click)="changeOrder(createdAt)"
+        [class.active]="activeOrderType === 2"
+        class="options_modal__order_button"
+      >
+        <p>Created date</p>
+        <i
+          [class.down]="createdAt?.value === 1"
+          class="fa-solid fa-arrow-up"
+        ></i>
+      </button>
+    </div>
+    <div *ngIf="!manageTypeIsTag" class="options_modal__content_container">
+      <h3>Filter notes by tag</h3>
+      <div class="options_modal__tag_filter_list">
+        <span
+          *ngFor="let item of tags"
+          (click)="filterByTag(item)"
+          class="options_modal__tag"
+          [ngStyle]="{ 'background-color': getTagColor(item.color) }"
+          [class.options_modal__tag_active]="filterTagInput.value === item"
+        >
+          {{ item.name }}
+        </span>
+      </div>
+      <div *ngIf="tags.length === 0" class="options_modal__no_tag_warning">
+        <p>No tags found</p>
+        <a routerLink="/create/tag" class="options_modal__no_tag_warning_link">
+          Create a new tag
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

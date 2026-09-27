@@ -1,0 +1,52 @@
+<main class="create__container">
+  <div class="create__page_header">
+    <div>
+      <p class="page__eyebrow">YOUR WORKSPACE / CREATE</p>
+      <h1>Start with an idea.</h1>
+      <p class="page__subtitle">Give your thoughts a home. You can organize them as you go.</p>
+    </div>
+    <app-type-toggle></app-type-toggle>
+  </div>
+  <div class="create__page_content">
+    <div class="create__main">
+      <form *ngIf="!createTypeIsTag" (ngSubmit)="submitNoteForm()" [formGroup]="noteForm" class="create_form__container" id="note_form">
+        <div class="create_form__heading"><span class="create_form__icon"><i class="fa-regular fa-note-sticky"></i></span><div><h2>New note</h2><p>Put your thoughts into words.</p></div></div>
+        <div class="create_form__input_control">
+          <label for="noteTitle">Title</label>
+          <input formControlName="title" type="text" name="noteTitle" id="noteTitle" placeholder="What is this about?" />
+          <small *ngIf="title?.invalid && (title?.dirty || title?.touched)"><ng-container *ngIf="title?.hasError('required')">A note title is required</ng-container><ng-container *ngIf="title?.hasError('minlength')">Use at least 3 characters</ng-container><ng-container *ngIf="title?.hasError('maxlength')">Use no more than 20 characters</ng-container></small>
+        </div>
+        <div class="create_form__input_control">
+          <label for="noteContent">Your note</label>
+          <textarea formControlName="content" name="noteContent" id="noteContent" placeholder="Write freely. You can edit this later." appTextareaAutoresize></textarea>
+          <small *ngIf="content?.invalid && (content?.dirty || content?.touched)"><ng-container *ngIf="content?.hasError('required')">A note needs some content</ng-container><ng-container *ngIf="content?.hasError('minlength')">Use at least 3 characters</ng-container></small>
+        </div>
+        <div class="create_form__tags_container">
+          <h2>Organize with tags <span>Optional</span></h2>
+          <div class="create_form__tag_list">
+            <button *ngFor="let item of tags" type="button" (click)="toggleTagToNote(item.id)" class="create_form__tag" [ngStyle]="{ 'background-color': getTagColor(item.color) }" [class.create_form__tag_active]="noteTagsXref.includes(item.id)" [attr.aria-pressed]="noteTagsXref.includes(item.id)">{{ item.name }}</button>
+          </div>
+          <div *ngIf="tags.length <= 0" class="create_form__no_tags">No tags yet. <a routerLink="/create/tag">Create one</a> when you need it.</div>
+        </div>
+        <div class="create_form__actions"><button type="submit" [disabled]="noteForm.invalid" class="create__submit_btn">Save note <i class="fa-solid fa-arrow-right"></i></button></div>
+      </form>
+      <form *ngIf="createTypeIsTag" (ngSubmit)="submitTagForm()" [formGroup]="tagForm" class="create_form__container" id="tag_form">
+        <div class="create_form__heading"><span class="create_form__icon"><i class="fa-solid fa-tag"></i></span><div><h2>New tag</h2><p>Make related notes easy to find.</p></div></div>
+        <div class="create_form__input_control">
+          <label for="tagName">Tag name</label>
+          <input formControlName="name" type="text" name="tagName" id="tagName" placeholder="e.g. Ideas, Work, Personal" />
+          <small *ngIf="name?.invalid && (name?.dirty || name?.touched)"><ng-container *ngIf="name?.hasError('required')">A tag name is required</ng-container><ng-container *ngIf="name?.hasError('minlength')">Use at least 3 characters</ng-container><ng-container *ngIf="name?.hasError('maxlength')">Use no more than 20 characters</ng-container></small>
+        </div>
+        <div class="create_form__input_control"><label>Color</label><button type="button" (click)="toggleColorPickerModal()" class="create_form__color_picker"><span [ngStyle]="{ 'background-color': getTagColor(color?.value) }"></span><span>Choose a color</span><i class="fa-solid fa-chevron-down"></i></button></div>
+        <div class="create_form__actions"><button type="submit" [disabled]="tagForm.invalid" class="create__submit_btn">Save tag <i class="fa-solid fa-arrow-right"></i></button></div>
+      </form>
+    </div>
+    <aside class="create__aside"><div class="create__aside_icon"><i class="fa-solid fa-lightbulb"></i></div><h2>A small thought can turn into something big.</h2><p>Keep it simple now. You can edit your notes and add more detail any time.</p><div class="create__aside_line"></div><span>YOUR SPACE, YOUR PACE</span></aside>
+  </div>
+</main>
+<div *ngIf="showColorPIckerModal" class="color_picker_modal__container" #modalOverlayEl>
+  <div class="color_picker_modal__block" #modalBlockEl role="dialog" aria-modal="true" aria-label="Pick a color">
+    <div class="color_picker_modal__heading"><h2>Pick a color</h2><button type="button" (click)="toggleColorPickerModal()" aria-label="Close color picker"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="color_picker_modal__list"><button type="button" *ngFor="let item of tagColors" (click)="pickColor(item)" [ngStyle]="{ 'background-color': item.color }" [class.color_picker_modal__item_active]="item.id === color?.value" [id]="item.name" class="color_picker_modal__item" [attr.aria-label]="item.name"></button></div>
+  </div>
+</div>

@@ -1,0 +1,42 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: notely
+      POSTGRES_PASSWORD: notely
+      POSTGRES_DB: notely
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notely -d notely"]
+      interval: 5s
+      retries: 10
+    ports:
+      - "127.0.0.1:5432:5432"
+  server:
+    build: ./server
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: postgres://notely:notely@db:5432/notely
+      CLIENT_ORIGIN: http://localhost:4201
+      COOKIE_SECURE: "false"
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+  client:
+    image: node:18-alpine
+    working_dir: /app
+    volumes:
+      - ./client:/app
+      - client_modules:/app/node_modules
+    command: sh -c "npm ci --legacy-peer-deps && npm start -- --host 0.0.0.0"
+    ports:
+      - "127.0.0.1:4201:4200"
+    depends_on:
+      - server
+volumes:
+  pgdata:
+  client_modules:

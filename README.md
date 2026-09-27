@@ -1,19 +1,15 @@
 # Notely
 
-A note taking application.
+Angular client with a Fastify/PostgreSQL API. Visitors can create notes and tags without an account. On save they can register, log in, or continue with local browser storage. The app warns when data is saved only on the device. Signing in imports local notes and tags into the account before removing the local copy.
 
-## Development server
+## Development
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+Run `docker compose up --build` and open http://localhost:4201. The API is at http://localhost:3001 and PostgreSQL is exposed locally on port 5432. The database schema is created by the server on startup.
 
-## Build
+For running without Docker, create a PostgreSQL database, copy `server/config/.env.development.example` to `server/.env`, set its connection string, then run `npm ci --prefix server`, `npm run dev --prefix server`, `npm ci --prefix client --legacy-peer-deps`, and `npm start --prefix client`.
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Production
 
-## Running unit tests
+The Vercel project serves `client/` and proxies `/api/*` to the Railway API through `client/vercel.json`. The Railway project runs the Fastify API from `server/` with PostgreSQL. Set `DATABASE_URL` to the Railway Postgres service URL, `CLIENT_ORIGIN` to the exact Vercel site origin, and `COOKIE_SECURE=true`. The API uses secure, HTTP-only session cookies. Back up the PostgreSQL database separately.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+For a Docker deployment, copy `.env.production.example` to `.env`, set the PostgreSQL URL and HTTPS origins, then run `docker compose -f compose.prod.yaml up --build -d`. The client image serves on localhost:8080 and the API on localhost:3001; expose both through an HTTPS reverse proxy. Set `API_URL` to that proxy's public API path or origin.

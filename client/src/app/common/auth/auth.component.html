@@ -1,0 +1,23 @@
+<div class="account-bar">
+  <span *ngIf="auth.user.value">{{ auth.user.value.email }}</span>
+  <button *ngIf="!auth.user.value" type="button" (click)="open()">Account</button>
+  <button *ngIf="auth.user.value" type="button" (click)="logout()">Log out</button>
+</div>
+<p *ngIf="warning" class="storage-warning" role="alert">{{ warning }} <button type="button" class="storage-warning__link" (click)="openLogin()">Sign in to back up</button></p>
+<div *ngIf="auth.prompt.value" class="auth-overlay" role="dialog" aria-modal="true" aria-label="Account">
+  <div class="auth-card">
+    <h2>Save your notes to your account</h2>
+    <p>Register or log in to keep your notes in sync.</p>
+    <div class="mode-buttons">
+      <button type="button" [class.selected]="mode === 'register'" (click)="mode='register'">Register</button>
+      <button type="button" [class.selected]="mode === 'login'" (click)="mode='login'">Log in</button>
+    </div>
+    <form (ngSubmit)="submit()">
+      <label>Email <input type="email" name="email" [(ngModel)]="email" required autocomplete="email" /></label>
+      <label>Password <input type="password" name="password" [(ngModel)]="password" required minlength="8" [autocomplete]="mode === 'register' ? 'new-password' : 'current-password'" /></label>
+      <p *ngIf="error" class="error" role="alert">{{ error }}</p>
+      <button type="submit" [disabled]="busy">{{ busy ? 'Please wait…' : (mode === 'register' ? 'Register' : 'Log in') }}</button>
+    </form>
+    <button class="local-button" type="button" (click)="continueLocal()">Continue on this device</button>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<header class="header__container">
+  <div class="header__inner">
+    <a class="header__brand" routerLink="/home" (click)="showMenu = false" aria-label="Notely home"><span class="header__brand_mark">N</span><span>notely<span class="header__brand_dot">.</span></span></a>
+    <button class="header__button" [class.is-open]="showMenu" type="button" (click)="toggleMenu()" [attr.aria-expanded]="showMenu" aria-controls="main-navigation" [attr.aria-label]="showMenu ? 'Close menu' : 'Open menu'">
+      <i [class.fa-bars]="!showMenu" [class.fa-xmark]="showMenu" class="fa-solid"></i>
+    </button>
+    <nav id="main-navigation" class="header__dropdown" [class.showMenu]="showMenu" aria-label="Main navigation">
+      <a routerLink="/home" routerLinkActive="active" (click)="showMenu = false">Home</a>
+      <a routerLink="/create/note" routerLinkActive="active" (click)="showMenu = false">Create</a>
+      <a routerLink="/manage/note" routerLinkActive="active" (click)="showMenu = false">My notes</a>
+    </nav>
+    <app-auth></app-auth>
+  </div>
+</header>

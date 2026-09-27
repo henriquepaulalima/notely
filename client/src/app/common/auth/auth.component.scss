@@ -1,0 +1,22 @@
+:host { display: block; }
+.account-bar { display: flex; align-items: center; gap: .5rem; padding: 0; }
+.account-bar span { display: none; min-width: 0; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted); font-size: .8rem; }
+.account-bar button { min-height: 40px; padding: .5rem .85rem; border: 1px solid var(--accent); border-radius: 10px; background: var(--accent); color: white; font-size: .76rem; font-weight: 700; }
+.account-bar button:hover { background: var(--accent-strong); }
+.storage-warning { position: fixed; z-index: 30; bottom: 1rem; left: 50%; width: min(100% - 2rem, 570px); padding: .9rem 1.1rem; border: 1px solid #d9bd85; border-radius: 12px; background: #fff5dd; box-shadow: var(--shadow); color: #62491e; transform: translateX(-50%); font-size: .85rem; }
+.storage-warning__link { border: 0; padding: 0; background: none; color: var(--accent-strong); font-weight: 750; text-decoration: underline; text-underline-offset: 2px; }
+.auth-overlay { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 1rem; background: #10213ac2; }
+.auth-card { width: min(100%, 430px); max-height: calc(100dvh - 2rem); overflow: auto; padding: clamp(1.3rem, 4vw, 2rem); border-radius: 20px; background: var(--surface); box-shadow: 0 24px 70px #0c22454a; }
+.auth-card h2 { font-size: clamp(1.5rem, 5vw, 1.9rem); line-height: 1.15; letter-spacing: -.04em; }
+.auth-card > p { margin-top: .6rem; color: var(--muted); }
+.mode-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; margin: 1.5rem 0; padding: .3rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-muted); }
+.mode-buttons button { min-height: 42px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 700; }
+.mode-buttons button.selected { background: white; color: var(--accent-strong); box-shadow: 0 2px 8px #1c3d7515; }
+.auth-card form { display: grid; gap: 1rem; }
+.auth-card label { display: grid; gap: .4rem; font-size: .85rem; font-weight: 700; }
+.auth-card input { width: 100%; min-height: 48px; padding: .65rem .8rem; border: 1px solid #bdcce0; border-radius: 10px; background: white; color: var(--ink); }
+.auth-card form > button { min-height: 48px; border: 0; border-radius: 10px; background: var(--accent); color: white; font-weight: 750; }
+.auth-card form > button:hover { background: var(--accent-strong); }
+.auth-card .local-button { display: block; width: 100%; min-height: 42px; margin-top: .65rem; border: 0; background: transparent; color: var(--muted); font-weight: 650; text-decoration: underline; text-underline-offset: 3px; }
+.error { color: var(--danger); font-size: .85rem; }
+@media (min-width: 760px) { .account-bar { padding-left: .7rem; margin-left: .4rem; border-left: 1px solid var(--line); } .account-bar span { display: block; } }
