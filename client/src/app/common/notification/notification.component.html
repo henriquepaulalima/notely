@@ -1,12 +1,15 @@
 <div *ngIf="notifications.length > 0" class="notification__container">
   <div class="notification__list">
     <div
-      *ngFor="let notification of notifications; let i = index"
-      (click)="hide(notification)"
+      *ngFor="let notification of notifications"
       [id]="notification.id"
-      [ngStyle]="getStyle(notification, i)"
+      [class.notification__item_success]="notification.type === 0"
+      [class.notification__item_error]="notification.type !== 0"
       class="notification__item"
     >
+      <button type="button" class="notification__close" (click)="hide(notification)" aria-label="Dismiss notification">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
       <h3>{{ notification.type === 0 ? "Success" : "Error" }}</h3>
       <p>{{ notification.message }}</p>
       <div class="notification__progress_bar">

@@ -1,16 +1,42 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/utils/services/auth.service';
 import { DataService } from 'src/app/utils/services/data.service';
+import { Subscription } from 'rxjs';
 
 @Component({ selector: 'app-auth', templateUrl: './auth.component.html', styleUrls: ['./auth.component.scss'] })
-export class AuthComponent {
+export class AuthComponent implements OnInit, OnDestroy {
   mode: 'login' | 'register' = 'register';
   email = '';
   password = '';
   error = '';
   busy = false;
   warning = '';
+  showPrompt = false;
+  closingPrompt = false;
+  private promptSubscription?: Subscription;
+  private promptCloseTimer?: ReturnType<typeof setTimeout>;
   constructor(public auth: AuthService, private data: DataService) {}
+  ngOnInit(): void {
+    this.promptSubscription = this.auth.prompt.subscribe(open => {
+      if (open) {
+        if (this.promptCloseTimer) clearTimeout(this.promptCloseTimer);
+        this.promptCloseTimer = undefined;
+        this.closingPrompt = false;
+        this.showPrompt = true;
+      } else if (this.showPrompt && !this.closingPrompt) {
+        this.closingPrompt = true;
+        this.promptCloseTimer = setTimeout(() => {
+          this.showPrompt = false;
+          this.closingPrompt = false;
+          this.promptCloseTimer = undefined;
+        }, 250);
+      }
+    });
+  }
+  ngOnDestroy(): void {
+    this.promptSubscription?.unsubscribe();
+    if (this.promptCloseTimer) clearTimeout(this.promptCloseTimer);
+  }
   async submit(): Promise<void> {
     this.busy = true;
     this.error = '';
@@ -40,4 +66,5 @@ export class AuthComponent {
   }
   open(): void { this.error = ''; this.auth.prompt.next(true); }
   openLogin(): void { this.mode = 'login'; this.open(); }
+  dismiss(): void { if (!this.busy) this.auth.closePrompt(); }
 }

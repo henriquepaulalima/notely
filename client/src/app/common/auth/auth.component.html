@@ -4,8 +4,9 @@
   <button *ngIf="auth.user.value" type="button" (click)="logout()">Log out</button>
 </div>
 <p *ngIf="warning" class="storage-warning" role="alert">{{ warning }} <button type="button" class="storage-warning__link" (click)="openLogin()">Sign in to back up</button></p>
-<div *ngIf="auth.prompt.value" class="auth-overlay" role="dialog" aria-modal="true" aria-label="Account">
-  <div class="auth-card">
+<div *ngIf="showPrompt" class="auth-overlay" [class.close]="closingPrompt" role="dialog" aria-modal="true" aria-label="Account">
+  <div class="auth-card" [class.close]="closingPrompt">
+    <button type="button" class="auth-card__close" (click)="dismiss()" [disabled]="busy" aria-label="Close account dialog"><i class="fa-solid fa-xmark"></i></button>
     <h2>Save your notes to your account</h2>
     <p>Register or log in to keep your notes in sync.</p>
     <div class="mode-buttons">

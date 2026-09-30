@@ -1,12 +1,4 @@
-import {
-  Component,
-  ElementRef,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { INotification } from 'src/app/utils/interfaces/inotification';
 import { NotificationService } from 'src/app/utils/services/notification.service';
 
@@ -35,14 +27,12 @@ export class NotificationComponent implements OnInit {
   }
 
   public hide(notification: INotification): void {
-    document.getElementById(notification.id)?.classList.add('hide');
+    const element = document.getElementById(notification.id);
+    if (element?.classList.contains('hide')) return;
+    element?.classList.add('hide');
     setTimeout(() => {
       const notificationIndex = this.notifications.indexOf(notification, 0);
-      this.notifications.splice(notificationIndex, 1);
-    }, 1000);
-  }
-
-  public getStyle(notification: INotification, index: number): object {
-    return { 'border-left': `4px solid ${notification.type === 0 ? '#315fa8' : '#a53d41'}` };
+      if (notificationIndex >= 0) this.notifications.splice(notificationIndex, 1);
+    }, 220);
   }
 }

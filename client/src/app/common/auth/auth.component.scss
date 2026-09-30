@@ -5,9 +5,13 @@
 .account-bar button:hover { background: var(--accent-strong); }
 .storage-warning { position: fixed; z-index: 30; bottom: 1rem; left: 50%; width: min(100% - 2rem, 570px); padding: .9rem 1.1rem; border: 1px solid #d9bd85; border-radius: 12px; background: #fff5dd; box-shadow: var(--shadow); color: #62491e; transform: translateX(-50%); font-size: .85rem; }
 .storage-warning__link { border: 0; padding: 0; background: none; color: var(--accent-strong); font-weight: 750; text-decoration: underline; text-underline-offset: 2px; }
-.auth-overlay { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 1rem; background: #10213ac2; }
-.auth-card { width: min(100%, 430px); max-height: calc(100dvh - 2rem); overflow: auto; padding: clamp(1.3rem, 4vw, 2rem); border-radius: 20px; background: var(--surface); box-shadow: 0 24px 70px #0c22454a; }
-.auth-card h2 { font-size: clamp(1.5rem, 5vw, 1.9rem); line-height: 1.15; letter-spacing: -.04em; }
+.auth-overlay { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: 1rem; background: #10213ac2; animation: modal-overlay-enter .25s ease both; }
+.auth-overlay.close { animation: modal-overlay-exit .25s ease both; }
+.auth-card { position: relative; width: min(100%, 430px); max-height: calc(100dvh - 2rem); overflow: auto; padding: clamp(1.3rem, 4vw, 2rem); border-radius: 20px; background: var(--surface); box-shadow: 0 24px 70px #0c22454a; animation: modal-panel-enter .25s ease both; }
+.auth-card.close { animation: modal-panel-exit .25s ease both; }
+.auth-card__close { position: absolute; top: .8rem; right: .8rem; display: grid; place-items: center; width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 9px; background: var(--surface); color: var(--muted); }
+.auth-card__close:hover:not(:disabled) { border-color: var(--accent); color: var(--accent-strong); }
+.auth-card h2 { padding-right: 2.2rem; font-size: clamp(1.5rem, 5vw, 1.9rem); line-height: 1.15; letter-spacing: -.04em; }
 .auth-card > p { margin-top: .6rem; color: var(--muted); }
 .mode-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: .3rem; margin: 1.5rem 0; padding: .3rem; border: 1px solid var(--line); border-radius: 12px; background: var(--surface-muted); }
 .mode-buttons button { min-height: 42px; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font-weight: 700; }

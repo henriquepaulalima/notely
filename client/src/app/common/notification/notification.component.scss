@@ -1,10 +1,13 @@
 .notification__container { position: fixed; z-index: 50; top: 1rem; right: 1rem; width: min(100% - 2rem, 350px); pointer-events: none; }
 .notification__list { display: grid; gap: .6rem; }
-.notification__item { position: relative; overflow: hidden; padding: .9rem 1rem 1rem; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); color: var(--ink); border: 1px solid var(--line); cursor: pointer; pointer-events: auto; animation: enter .17s ease-out; }
+.notification__item { position: relative; overflow: hidden; padding: .9rem 3rem 1rem 1rem; border-radius: 12px; background: var(--surface); box-shadow: var(--shadow); color: var(--ink); border: 1px solid var(--line); pointer-events: auto; animation: enter .17s ease-out; }
 .notification__item h3 { font-weight: 750; font-size: .88rem; }
 .notification__item p { color: var(--muted); font-size: .83rem; }
 .notification__item.hide { opacity: 0; transform: translateX(15px); transition: opacity .2s, transform .2s; }
+.notification__close { position: absolute; top: .55rem; right: .55rem; display: grid; place-items: center; width: 30px; height: 30px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); }
+.notification__close:hover { background: var(--surface-muted); color: var(--ink); }
 .notification__progress_bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: var(--line); }
 .notification__progress_bar span { display: block; height: 100%; width: 100%; background: var(--accent); animation: progress 5s linear forwards; }
+.notification__item_error .notification__progress_bar span { background: var(--danger); }
 @keyframes progress { to { width: 0; } }
 @keyframes enter { from { opacity: 0; transform: translateY(-8px); } }
