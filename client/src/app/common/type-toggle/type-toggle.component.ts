@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router, UrlSegment } from '@angular/router';
+import { DataService } from 'src/app/utils/services/data.service';
 
 @Component({
   selector: 'app-type-toggle',
@@ -18,7 +19,11 @@ export class TypeToggleComponent implements OnInit {
   constructor(
     private router: Router,
     private activetedRouter: ActivatedRoute,
+    private data: DataService,
   ) {}
+
+  get noteCount(): number { return this.data.notes.length; }
+  get tagCount(): number { return this.data.tags.length; }
 
   ngOnInit(): void {
     this.activetedRouter.paramMap.subscribe((params: ParamMap) => {

@@ -1,7 +1,4 @@
 <div class="manage__list_header">
-  <button type="button" (click)="toggleOptionsModal()" aria-label="View options">
-    <i class="fa-solid fa-ellipsis"></i>
-  </button>
   <div class="manage__serach_input_container">
     <input
       (input)="sendSearchInputValue()"
@@ -22,23 +19,29 @@
       <i class="fa-solid fa-xmark"></i>
     </label>
   </div>
+  <button type="button" (click)="toggleOptionsModal()" aria-label="View options">
+    <i class="fa-solid fa-ellipsis"></i>
+  </button>
 </div>
 
 <div
   *ngIf="showOptionsModal"
   class="options_modal__container"
+  [class.close]="isClosing"
   #modalOverlayEl
 >
-  <div class="options_modal__block" #modalBlockEl role="dialog" aria-modal="true" aria-label="View options">
+  <div class="options_modal__block" [class.close]="isClosing" #modalBlockEl role="dialog" aria-modal="true" aria-label="View options">
     <button type="button" class="options_modal__close" (click)="toggleOptionsModal()" aria-label="Close options"><i class="fa-solid fa-xmark"></i></button>
     <h2>Options</h2>
     <div class="options_modal__content_container">
       <h3>View mode</h3>
-      <button (click)="changeViewMode()" class="options_modal__view_mode_btn">
-        <p>{{ viewMode === 0 ? "List" : "Grid" }}</p>
-        <i [class.hide]="viewMode !== 0" class="fa-solid fa-list"></i>
-        <i [class.hide]="viewMode !== 1" class="fa-solid fa-border-all"></i>
-      </button>
+      <div class="options_modal__view_toggle">
+        <input type="checkbox" id="manage_view_toggle" [checked]="viewMode === 1" (change)="changeViewMode($event)" aria-label="Use grid view" />
+        <label for="manage_view_toggle">
+          <span><i class="fa-solid fa-list"></i> List</span>
+          <span><i class="fa-solid fa-border-all"></i> Grid</span>
+        </label>
+      </div>
     </div>
     <div class="options_modal__content_container">
       <h3>Order {{ manageTypeIsTag ? "tags" : "notes" }}</h3>
@@ -78,15 +81,17 @@
     <div *ngIf="!manageTypeIsTag" class="options_modal__content_container">
       <h3>Filter notes by tag</h3>
       <div class="options_modal__tag_filter_list">
-        <span
+        <button
+          type="button"
           *ngFor="let item of tags"
           (click)="filterByTag(item)"
           class="options_modal__tag"
           [ngStyle]="{ 'background-color': getTagColor(item.color) }"
-          [class.options_modal__tag_active]="filterTagInput.value === item"
+          [class.options_modal__tag_active]="filterTagInput.value?.id === item.id"
+          [attr.aria-pressed]="filterTagInput.value?.id === item.id"
         >
-          {{ item.name }}
-        </span>
+          <span class="options_modal__tag_indicator" aria-hidden="true"></span>{{ item.name }}
+        </button>
       </div>
       <div *ngIf="tags.length === 0" class="options_modal__no_tag_warning">
         <p>No tags found</p>

@@ -7,6 +7,7 @@
     <app-content-header
       [viewMode]="viewMode"
       [manageTypeIsTag]="manageTypeIsTag"
+      [searchText]="manageTypeIsTag ? tagSearchText : noteSearchText"
       [reloadTagList]="reloadContentHeaderTagList"
       (viewModeChanged)="setNewViewMode()"
       (filterList)="loadFilteredList($event)"

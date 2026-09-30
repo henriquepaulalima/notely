@@ -4,7 +4,9 @@
 .type__toggle label { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); min-height: 48px; padding: 4px; border: 1px solid var(--line); border-radius: 12px; background: #e8eff8; cursor: pointer; }
 .type__toggle label::before { content: ''; position: absolute; top: 4px; left: 4px; width: calc(50% - 4px); height: calc(100% - 8px); border-radius: 9px; background: var(--surface); box-shadow: 0 2px 9px #203e721c; transition: transform .28s cubic-bezier(.2,.8,.2,1); }
 .type__toggle input:checked + label::before { transform: translateX(100%); }
-.type__toggle label div { position: relative; z-index: 1; display: grid; place-items: center; color: var(--muted); font-size: .85rem; font-weight: 750; transition: color .22s ease; }
+.type__toggle label div { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; gap: .4rem; color: var(--muted); font-size: .85rem; font-weight: 750; transition: color .22s ease; }
+.type__toggle_count { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 .25rem; border-radius: 100px; background: #d5e0ee; font-size: .7rem; line-height: 1; }
+.type__toggle input:not(:checked) + label div:first-child .type__toggle_count, .type__toggle input:checked + label div:last-child .type__toggle_count { background: var(--accent-soft); }
 .type__toggle input:not(:checked) + label div:first-child, .type__toggle input:checked + label div:last-child { color: var(--accent-strong); }
 .type__toggle input:focus-visible + label { outline: 3px solid #8bb5e9; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .type__toggle label::before, .type__toggle label div { transition: none; } }

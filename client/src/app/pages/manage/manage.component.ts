@@ -19,6 +19,9 @@ export class ManageComponent implements OnInit {
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
   public manageTypeIsTag: boolean = false;
+  public noteSearchText: string | null = '';
+  public tagSearchText: string | null = '';
+  public noteTagFilter: ITag | null = null;
   public viewMode!: ViewMode;
   public notes: INote[] = [];
   public tags: ITag[] = [];
@@ -26,6 +29,7 @@ export class ManageComponent implements OnInit {
   public currentNote!: INote | ITag;
   public screenTop: number = 0;
   public reloadContentHeaderTagList = new Subject<void>();
+  private routeInitialized = false;
 
   constructor(
     private noteService: NoteService,
@@ -35,18 +39,20 @@ export class ManageComponent implements OnInit {
   ) {
     this.activatedRoute.paramMap.subscribe((params: ParamMap) => {
       const type = params.get('type');
-
-      if (type === 'note') {
-        this.manageTypeIsTag = false;
-      } else if (type === 'tag') {
-        this.manageTypeIsTag = true;
-      }
+      const nextIsTag = type === 'tag';
+      const viewChanged = this.routeInitialized && nextIsTag !== this.manageTypeIsTag;
+      this.manageTypeIsTag = nextIsTag;
+      this.routeInitialized = true;
+      if (viewChanged) this.applyCurrentFilter();
     });
   }
 
   ngOnInit(): void {
     this.loadList(false);
-    this.data.changed.subscribe(() => this.loadList(false));
+    this.data.changed.subscribe(() => {
+      this.loadList(false);
+      this.applyCurrentFilter();
+    });
 
     this.getViewMode();
   }
@@ -78,15 +84,24 @@ export class ManageComponent implements OnInit {
 
   public loadFilteredList(filterObj: FilterObject): void {
     if (this.manageTypeIsTag) {
-      this.tags = this.tagService.getFilteredTags(filterObj.text);
+      this.tagSearchText = filterObj.text;
+    } else {
+      this.noteSearchText = filterObj.text;
+      this.noteTagFilter = filterObj.tag || null;
+    }
+    this.applyCurrentFilter();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  private applyCurrentFilter(): void {
+    if (this.manageTypeIsTag) {
+      this.tags = this.tagService.getFilteredTags(this.tagSearchText);
     } else {
       this.notes = this.noteService.getFilteredNotes(
-        filterObj.text,
-        filterObj.tag,
+        this.noteSearchText,
+        this.noteTagFilter,
       );
     }
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   public getTagColor(tagColor: TagColors): string {

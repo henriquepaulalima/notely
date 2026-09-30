@@ -3,9 +3,12 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnChanges,
+  OnDestroy,
   OnInit,
   Output,
   Renderer2,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import {
@@ -21,8 +24,9 @@ import {
 } from 'src/app/utils/interfaces/iorder';
 import { ITag, TagColors } from 'src/app/utils/interfaces/itag';
 import { TagService } from 'src/app/utils/services/tag.service';
+import { DataService } from 'src/app/utils/services/data.service';
 import { ViewMode } from '../manage.component';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
 const body = document.querySelector('body');
 
@@ -31,9 +35,10 @@ const body = document.querySelector('body');
   templateUrl: './content-header.component.html',
   styleUrls: ['./content-header.component.scss'],
 })
-export class ContentHeaderComponent implements OnInit {
+export class ContentHeaderComponent implements OnInit, OnChanges, OnDestroy {
   @Input() manageTypeIsTag: boolean = false;
   @Input() viewMode!: ViewMode;
+  @Input() searchText: string | null = '';
   @Input() reloadTagList!: Subject<void>;
   @Output() viewModeChanged = new EventEmitter<void>();
   @Output() filterList = new EventEmitter<FilterObject>();
@@ -42,16 +47,19 @@ export class ContentHeaderComponent implements OnInit {
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
 
   public showOptionsModal: boolean = false;
+  public isClosing: boolean = false;
   public listOrder!: FormGroup;
   public searchTextInput = new FormControl<string | null>(null);
   public filterTagInput = new FormControl<ITag | null>(null);
   public tags: ITag[] = [];
   public screenTop: number = 0;
   public activeOrderType!: OrderType;
+  private subscriptions = new Subscription();
 
   constructor(
     private renderer: Renderer2,
     private tagService: TagService,
+    private data: DataService,
   ) {
     this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
@@ -61,7 +69,7 @@ export class ContentHeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.searchTextInput = new FormControl<string>('', [
+    this.searchTextInput = new FormControl<string | null>(this.searchText, [
       Validators.required,
       Validators.minLength(3),
       Validators.maxLength(20),
@@ -81,7 +89,17 @@ export class ContentHeaderComponent implements OnInit {
 
     this.loadTagList();
 
-    this.reloadTagList.subscribe(() => this.loadTagList());
+    this.subscriptions.add(this.reloadTagList.subscribe(() => this.loadTagList()));
+    this.subscriptions.add(this.data.changed.subscribe(() => this.loadTagList()));
+  }
+
+  ngOnDestroy(): void { this.subscriptions.unsubscribe(); }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const viewChange = changes['manageTypeIsTag'];
+    if (viewChange && !viewChange.firstChange && this.searchTextInput) {
+      this.searchTextInput.setValue(this.searchText);
+    }
   }
 
   get noteTitle(): AbstractControl<OrderValue> | null | undefined {
@@ -98,29 +116,35 @@ export class ContentHeaderComponent implements OnInit {
 
   public loadTagList(): void {
     this.tags = this.tagService.getAllTags();
-    if (!this.tags) this.tags = [];
+    const selected = this.filterTagInput.value;
+    if (selected) {
+      const current = this.tags.find(tag => tag.id === selected.id) || null;
+      this.filterTagInput.setValue(current);
+      if (!current) this.sendSearchInputValue();
+    }
   }
 
   public toggleOptionsModal(): void {
+    if (this.isClosing) return;
     this.screenTop = document.documentElement.scrollTop;
     if (this.showOptionsModal) {
-      this.modalBlockEl.nativeElement.classList.add('close');
+      this.isClosing = true;
       setTimeout(() => {
         this.showOptionsModal = false;
+        this.isClosing = false;
         if (body) body.style.overflow = 'scroll';
-      }, 500);
+      }, 250);
     } else {
+      this.isClosing = false;
       this.showOptionsModal = true;
       if (body) body.style.overflow = 'hidden';
     }
   }
 
-  public changeViewMode(): void {
-    if (this.viewMode === ViewMode.LIST) {
-      this.viewMode = ViewMode.GRID;
-    } else {
-      this.viewMode = ViewMode.LIST;
-    }
+  public changeViewMode(event: Event): void {
+    this.viewMode = (event.target as HTMLInputElement).checked
+      ? ViewMode.GRID
+      : ViewMode.LIST;
     localStorage.setItem('viewMode', this.viewMode.toString());
     this.viewModeChanged.emit();
   }
@@ -168,20 +192,17 @@ export class ContentHeaderComponent implements OnInit {
   }
 
   public filterByTag(tag: ITag): void {
+    if (this.filterTagInput.value?.id === tag.id) {
+      this.filterTagInput.setValue(null);
+    } else {
+      this.filterTagInput.setValue(tag);
+    }
+
+    this.filterList.emit({
+      text: this.searchTextInput.value,
+      tag: this.filterTagInput.value,
+    });
     this.toggleOptionsModal();
-
-    setTimeout(() => {
-      if (this.filterTagInput.value === tag) {
-        this.filterTagInput.setValue(null);
-      } else {
-        this.filterTagInput.setValue(tag);
-      }
-
-      this.filterList.emit({
-        text: this.searchTextInput.value,
-        tag: this.filterTagInput.value,
-      });
-    }, 500);
   }
 
   public sendSearchInputValue(): void {
