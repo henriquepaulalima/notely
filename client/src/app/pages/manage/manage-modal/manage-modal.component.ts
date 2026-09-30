@@ -3,6 +3,7 @@ import {
   ElementRef,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output,
   Renderer2,
@@ -29,7 +30,7 @@ const body = document.querySelector('body');
   templateUrl: './manage-modal.component.html',
   styleUrls: ['./manage-modal.component.scss'],
 })
-export class ManageModalComponent implements OnInit {
+export class ManageModalComponent implements OnInit, OnDestroy {
   @Input() typeIsTag: boolean = false;
   @Input() data!: INote | ITag;
   @Input() screenTop: number = 0;
@@ -38,17 +39,24 @@ export class ManageModalComponent implements OnInit {
 
   @ViewChild('modalOverlayEl') modalOverlayEl!: ElementRef;
   @ViewChild('modalBlockEl') modalBlockEl!: ElementRef;
+  @ViewChild('colorControlEl') colorControlEl?: ElementRef;
+  @ViewChild('colorButtonEl') colorButtonEl?: ElementRef;
 
   public noteData!: INote;
   public tagData!: ITag;
   public showModal: boolean = true;
+  public isClosing: boolean = false;
   public noteForm!: FormGroup;
   public tagForm!: FormGroup;
   public editingForm: boolean = false;
   public formHasChanged: boolean = false;
   public initialFormData!: Object;
   public tagColors: ITagColor[] = [];
+  public availableTags: ITag[] = [];
+  public noteTags: string[] = [];
   public editingTagColor: boolean = false;
+  public colorMenuPosition = { top: 0, left: 0 };
+  private unlistenWindow: () => void;
 
   constructor(
     private renderer: Renderer2,
@@ -56,12 +64,17 @@ export class ManageModalComponent implements OnInit {
     private tagService: TagService,
     private notificationService: NotificationService,
   ) {
-    this.renderer.listen('window', 'click', (event: Event) => {
+    this.unlistenWindow = this.renderer.listen('window', 'click', (event: Event) => {
       if (event.target === this.modalOverlayEl?.nativeElement) {
         this.startHideModal();
+      } else if (this.editingTagColor &&
+        !this.colorControlEl?.nativeElement.contains(event.target)) {
+        this.editingTagColor = false;
       }
     });
   }
+
+  ngOnDestroy(): void { this.unlistenWindow(); }
 
   ngOnInit(): void {
     if (body) body.style.overflow = 'hidden';
@@ -84,6 +97,8 @@ export class ManageModalComponent implements OnInit {
       this.tagColors = this.tagService.getAllTagColors();
     } else {
       this.noteData = this.data as INote;
+      this.availableTags = this.tagService.getAllTags();
+      this.noteTags = [...this.noteData.tags];
       this.noteForm = new FormGroup({
         title: new FormControl<string>(
           this.noteData.title,
@@ -106,18 +121,24 @@ export class ManageModalComponent implements OnInit {
     return this.tagForm.get('color');
   }
 
+  get selectedTags(): ITag[] {
+    return this.availableTags.filter(tag => this.noteTags.includes(tag.id));
+  }
+
   public startHideModal(): void {
-    this.modalBlockEl.nativeElement.classList.add('close');
+    if (this.isClosing) return;
+    this.isClosing = true;
     setTimeout(() => {
       this.showModal = false;
       if (body) body.style.overflow = 'scroll';
       this.hideModal.emit();
-    }, 500);
+    }, 250);
   }
 
   public toggleEditForm(): void {
     if (this.editingForm) {
       this.editingForm = false;
+      this.editingTagColor = false;
       if (this.typeIsTag) {
         this.tagForm.get('name')?.disable();
         this.tagForm.get('color')?.disable();
@@ -126,7 +147,9 @@ export class ManageModalComponent implements OnInit {
         this.noteForm.get('title')?.disable();
         this.noteForm.get('content')?.disable();
         this.noteForm.setValue(this.initialFormData);
+        this.noteTags = [...this.noteData.tags];
       }
+      this.formHasChanged = false;
     } else {
       if (this.typeIsTag) {
         this.editingForm = true;
@@ -141,11 +164,20 @@ export class ManageModalComponent implements OnInit {
   }
 
   public checkFormChange(form: FormGroup): void {
-    if (form.value !== this.initialFormData) {
-      this.formHasChanged = true;
-    } else {
-      this.formHasChanged = false;
-    }
+    this.formHasChanged = this.typeIsTag
+      ? form.get('name')?.value !== this.tagData.name || form.get('color')?.value !== this.tagData.color
+      : form.get('title')?.value !== this.noteData.title ||
+        form.get('content')?.value !== this.noteData.content ||
+        this.noteTags.length !== this.noteData.tags.length ||
+        this.noteTags.some(id => !this.noteData.tags.includes(id));
+  }
+
+  public toggleNoteTag(id: string): void {
+    if (!this.editingForm) return;
+    this.noteTags = this.noteTags.includes(id)
+      ? this.noteTags.filter(tagId => tagId !== id)
+      : [...this.noteTags, id];
+    this.checkFormChange(this.noteForm);
   }
 
   public async save(): Promise<void> {
@@ -183,7 +215,7 @@ export class ManageModalComponent implements OnInit {
         id: this.noteData.id,
         title: this.noteForm.get('title')?.value,
         content: this.noteForm.get('content')?.value,
-        tags: this.noteData.tags,
+        tags: [...this.noteTags],
         createdAt: this.noteData.createdAt,
         updatedAt: new Date(),
         active: true,
@@ -267,5 +299,23 @@ export class ManageModalComponent implements OnInit {
     this.tagColor?.setValue(colorElement);
     this.editingTagColor = false;
     this.checkFormChange(this.tagForm);
+  }
+
+  public toggleColorPicker(): void {
+    if (!this.editingForm) return;
+    if (!this.editingTagColor) {
+      const rect = this.colorButtonEl?.nativeElement.getBoundingClientRect();
+      if (rect) {
+        const menuWidth = 172;
+        const menuHeight = 164;
+        this.colorMenuPosition = {
+          left: Math.max(8, Math.min(rect.left, window.innerWidth - menuWidth - 8)),
+          top: rect.bottom + menuHeight + 8 <= window.innerHeight
+            ? rect.bottom + 8
+            : Math.max(8, rect.top - menuHeight - 8),
+        };
+      }
+    }
+    this.editingTagColor = !this.editingTagColor;
   }
 }

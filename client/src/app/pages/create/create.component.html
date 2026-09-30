@@ -24,7 +24,7 @@
         <div class="create_form__tags_container">
           <h2>Organize with tags <span>Optional</span></h2>
           <div class="create_form__tag_list">
-            <button *ngFor="let item of tags" type="button" (click)="toggleTagToNote(item.id)" class="create_form__tag" [ngStyle]="{ 'background-color': getTagColor(item.color) }" [class.create_form__tag_active]="noteTagsXref.includes(item.id)" [attr.aria-pressed]="noteTagsXref.includes(item.id)">{{ item.name }}</button>
+            <button *ngFor="let item of tags" type="button" (click)="toggleTagToNote(item.id)" class="create_form__tag" [ngStyle]="{ 'background-color': getTagColor(item.color) }" [class.create_form__tag_active]="noteTagsXref.includes(item.id)" [attr.aria-pressed]="noteTagsXref.includes(item.id)"><span class="create_form__tag_indicator" aria-hidden="true"></span>{{ item.name }}</button>
           </div>
           <div *ngIf="tags.length <= 0" class="create_form__no_tags">No tags yet. <a routerLink="/create/tag">Create one</a> when you need it.</div>
         </div>
@@ -44,8 +44,8 @@
     <aside class="create__aside"><div class="create__aside_icon"><i class="fa-solid fa-lightbulb"></i></div><h2>A small thought can turn into something big.</h2><p>Keep it simple now. You can edit your notes and add more detail any time.</p><div class="create__aside_line"></div><span>YOUR SPACE, YOUR PACE</span></aside>
   </div>
 </main>
-<div *ngIf="showColorPIckerModal" class="color_picker_modal__container" #modalOverlayEl>
-  <div class="color_picker_modal__block" #modalBlockEl role="dialog" aria-modal="true" aria-label="Pick a color">
+<div *ngIf="showColorPIckerModal" class="color_picker_modal__container" [class.close]="isClosingColorPicker" #modalOverlayEl>
+  <div class="color_picker_modal__block" [class.close]="isClosingColorPicker" #modalBlockEl role="dialog" aria-modal="true" aria-label="Pick a color">
     <div class="color_picker_modal__heading"><h2>Pick a color</h2><button type="button" (click)="toggleColorPickerModal()" aria-label="Close color picker"><i class="fa-solid fa-xmark"></i></button></div>
     <div class="color_picker_modal__list"><button type="button" *ngFor="let item of tagColors" (click)="pickColor(item)" [ngStyle]="{ 'background-color': item.color }" [class.color_picker_modal__item_active]="item.id === color?.value" [id]="item.name" class="color_picker_modal__item" [attr.aria-label]="item.name"></button></div>
   </div>

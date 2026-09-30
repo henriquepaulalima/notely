@@ -1,9 +1,10 @@
 <div
   *ngIf="showModal"
   class="manage_modal__container"
+  [class.close]="isClosing"
   #modalOverlayEl
 >
-  <div class="manage_modal__block" #modalBlockEl role="dialog" aria-modal="true" [attr.aria-label]="typeIsTag ? 'Manage tag' : 'Manage note'">
+  <div class="manage_modal__block" [class.close]="isClosing" #modalBlockEl role="dialog" aria-modal="true" [attr.aria-label]="typeIsTag ? 'Manage tag' : 'Manage note'">
     <h2>Manage {{ typeIsTag ? "Tag" : "Note" }}</h2>
     <form
       *ngIf="!typeIsTag"
@@ -29,6 +30,23 @@
             name="note_content"
             id="note_content"
           ></textarea>
+        </div>
+        <div class="manage_modal__form_input_container">
+          <label>Tags</label>
+          <div class="manage_modal__tag_list">
+            <button
+              *ngFor="let tag of editingForm ? availableTags : selectedTags"
+              type="button"
+              (click)="toggleNoteTag(tag.id)"
+              [disabled]="!editingForm"
+              [ngStyle]="{ 'background-color': getTagColor(tag.color) }"
+              [class.manage_modal__tag_selected]="noteTags.includes(tag.id)"
+              [attr.aria-pressed]="noteTags.includes(tag.id)"
+              class="manage_modal__tag"
+            ><span class="manage_modal__tag_indicator" aria-hidden="true"></span>{{ tag.name }}</button>
+          </div>
+          <p *ngIf="!editingForm && selectedTags.length === 0" class="manage_modal__no_tags">No tags on this note.</p>
+          <p *ngIf="editingForm && availableTags.length === 0" class="manage_modal__no_tags">No tags yet. Create one to organize your notes.</p>
         </div>
         <ng-container *ngIf="!editingForm">
           <div class="manage_modal__form_date_container">
@@ -58,31 +76,33 @@
             id="tag_name"
           />
         </div>
-        <div
-          [class.has_color_picker]="editingTagColor"
-          class="manage_modal__form_input_container"
-        >
+        <div class="manage_modal__form_input_container manage_modal__color_control" #colorControlEl>
           <label for="tag_color">Color</label>
-          <span
-            (click)="editingTagColor = true"
+          <button
+            type="button"
+            id="tag_color"
+            #colorButtonEl
+            (click)="toggleColorPicker()"
+            [disabled]="!editingForm"
+            [attr.aria-expanded]="editingTagColor"
+            aria-label="Choose tag color"
             [ngStyle]="{ 'background-color': getTagColor(tagColor?.value) }"
-            [class.hide]="editingTagColor"
-            [class.disabled]="!editingForm"
             class="manage_modal__current_tag_color"
           >
             <i *ngIf="editingForm" class="fa-solid fa-pen-to-square"></i>
-          </span>
-          <div [class.hide]="!editingTagColor" class="color_picker__list">
-            <span
+          </button>
+          <div *ngIf="editingTagColor" class="color_picker__list" aria-label="Tag colors"
+            [style.top.px]="colorMenuPosition.top" [style.left.px]="colorMenuPosition.left">
+            <button
               *ngFor="let item of tagColors"
+              type="button"
               (click)="pickColor(item.id)"
               [ngStyle]="{ 'background-color': item.color }"
-              [class.color_picker_modal__item_active]="
-                item.id === tagData.color
-              "
-              [id]="item.name"
+              [class.color_picker_modal__item_active]="item.id === tagColor?.value"
+              [attr.aria-label]="item.name"
+              [attr.aria-pressed]="item.id === tagColor?.value"
               class="color_picker__item"
-            ></span>
+            ></button>
           </div>
         </div>
         <ng-container *ngIf="!editingForm">
@@ -98,15 +118,15 @@
       </div>
     </form>
     <div *ngIf="!editingForm" class="manage_modal__buttons_container">
-      <button (click)="startHideModal()" class="manage_modal__cancel_button">
-        Close
-      </button>
-      <button (click)="toggleEditForm()" *ngIf="!editingForm">Edit</button>
-    </div>
-    <div *ngIf="editingForm" class="manage_modal__buttons_container">
       <button (click)="delete()" class="manage_modal__delete_button">
         Delete
       </button>
+      <button (click)="startHideModal()" class="manage_modal__cancel_button">
+        Close
+      </button>
+      <button (click)="toggleEditForm()">Edit</button>
+    </div>
+    <div *ngIf="editingForm" class="manage_modal__buttons_container">
       <button (click)="toggleEditForm()" class="manage_modal__cancel_button">
         Cancel
       </button>

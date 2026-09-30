@@ -40,6 +40,7 @@ export class CreateComponent implements OnInit {
   public tags: ITag[] = [];
   public noteTagsXref: string[] = [];
   public showColorPIckerModal: boolean = false;
+  public isClosingColorPicker: boolean = false;
   public screenTop: number = 0;
 
   constructor(
@@ -192,12 +193,15 @@ export class CreateComponent implements OnInit {
   public toggleColorPickerModal(): void {
     this.screenTop = document.documentElement.scrollTop;
     if (this.showColorPIckerModal) {
-      this.modalBlockEl.nativeElement.classList.add('close');
+      if (this.isClosingColorPicker) return;
+      this.isClosingColorPicker = true;
       setTimeout(() => {
         this.showColorPIckerModal = false;
+        this.isClosingColorPicker = false;
         if (body) body.style.overflow = 'scroll';
-      }, 500);
+      }, 250);
     } else {
+      this.isClosingColorPicker = false;
       this.showColorPIckerModal = true;
       if (body) body.style.overflow = 'hidden';
     }
@@ -207,9 +211,7 @@ export class CreateComponent implements OnInit {
     const element = document.getElementById(colorElement.name);
     this.color?.setValue(colorElement.id);
     element?.focus();
-    setTimeout(() => {
-      this.toggleColorPickerModal();
-    }, 250);
+    this.toggleColorPickerModal();
   }
 
   public createNoteTesst() {
