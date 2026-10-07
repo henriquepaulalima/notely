@@ -1,0 +1,6 @@
+export const LIMITS = { notes: 500, tags: 100, storageBytes: 5 * 1024 * 1024, noteContent: 20000, sessionsPerUser: 10, registrationsPerHour: 50 };
+export const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
+export const date = value => typeof value === 'string' && !Number.isNaN(Date.parse(value));
+export const validTag = t => Boolean(t) && uuid(t.id) && typeof t.name === 'string' && t.name.trim().length >= 1 && t.name.length <= 100 && Number.isInteger(t.color) && t.color >= 0 && t.color <= 8 && typeof t.active === 'boolean' && date(t.createdAt) && date(t.updatedAt);
+export const validNote = n => Boolean(n) && uuid(n.id) && typeof n.title === 'string' && n.title.trim().length >= 1 && n.title.length <= 200 && typeof n.content === 'string' && n.content.trim().length >= 1 && n.content.length <= LIMITS.noteContent && Array.isArray(n.tags) && n.tags.every(uuid) && typeof n.active === 'boolean' && date(n.createdAt) && date(n.updatedAt);
+export const validRegistration = (email, password) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254 && typeof password === 'string' && password.length >= 8 && password.length <= 72;
