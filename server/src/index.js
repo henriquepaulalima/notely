@@ -9,13 +9,16 @@ import { readFile } from 'node:fs/promises';
 const { Pool } = pg;
 const origin = process.env.CLIENT_ORIGIN;
 if (!process.env.DATABASE_URL || !origin) throw new Error('DATABASE_URL and CLIENT_ORIGIN are required');
-// Proxy hops in front of the server: Railway's edge adds one, and requests proxied by Vercel add another.
-// Fastify ignores a numeric trustProxy, so the hop count is passed as a function.
-const proxyHops = Number(process.env.TRUST_PROXY_HOPS ?? 1);
-const app = Fastify({ bodyLimit: 256 * 1024, logger: true, trustProxy: (address, hop) => hop < proxyHops });
+// Railway's edge overwrites X-Real-IP with the connecting address; the socket address is Railway's internal proxy.
+// Requests proxied by Vercel connect from Vercel, so their limits apply per Vercel address.
+const clientIp = request => request.headers['x-real-ip'] || request.ip;
+const app = Fastify({
+  bodyLimit: 256 * 1024,
+  logger: { serializers: { req: request => ({ method: request.method, url: request.url, remoteAddress: clientIp(request) }) } },
+});
 const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 10, connectionTimeoutMillis: 5000, idleTimeoutMillis: 30000, statement_timeout: 10000, query_timeout: 15000 });
 const LIMITS = { notes: 500, tags: 100, storageBytes: 5 * 1024 * 1024, noteContent: 20000, sessionsPerUser: 10, registrationsPerHour: 50 };
-await app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
+await app.register(rateLimit, { max: 120, timeWindow: '1 minute', keyGenerator: clientIp });
 
 app.addHook('onRequest', async (request, reply) => {
   reply.header('Cache-Control', 'no-store');
