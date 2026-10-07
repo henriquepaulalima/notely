@@ -53,4 +53,43 @@ describe('ManageModalComponent note tags', () => {
     expect(component.noteTags).toEqual([originalTag.id]);
     expect(component.formHasChanged).toBeFalse();
   });
+
+  it("shows the server's message when saving an edit fails", async () => {
+    const { component, editNote } = create();
+    const notify = spyOn((component as any).notificationService, 'createNewNotification');
+    editNote.and.returnValue(Promise.reject({ error: { error: 'Storage limit reached' } }));
+    spyOn(console, 'error');
+    component.toggleEditForm();
+
+    await component.save();
+
+    expect(notify).toHaveBeenCalledWith(jasmine.objectContaining({ message: 'Storage limit reached' }));
+  });
+
+  it('limits edited content to 20,000 characters', () => {
+    const { component } = create();
+    component.toggleEditForm();
+
+    component.noteForm.get('content')?.setValue('x'.repeat(20001));
+
+    expect(component.noteForm.get('content')?.hasError('maxlength')).toBeTrue();
+  });
+
+  it('deletes the note and reports failures', async () => {
+    const renderer = { listen: () => () => {} } as unknown as Renderer2;
+    const deleteNote = jasmine.createSpy('deleteNote').and.returnValues(Promise.resolve(), Promise.reject(new Error('offline')));
+    const notify = jasmine.createSpy('createNewNotification');
+    const component = new ManageModalComponent(renderer, { deleteNote } as unknown as NoteService,
+      { getAllTags: () => [] } as unknown as TagService, { createNewNotification: notify } as unknown as NotificationService);
+    component.data = note;
+    component.ngOnInit();
+    spyOn(console, 'error');
+
+    await component.delete();
+    await component.delete();
+
+    expect(deleteNote).toHaveBeenCalledWith(note.id);
+    expect(notify.calls.allArgs().map(([n]) => n.message)).toEqual(['Note deleted', 'Could not delete note']);
+  });
 });
+
