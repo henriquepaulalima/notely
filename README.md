@@ -10,6 +10,8 @@ For running without Docker, create a PostgreSQL database, copy `server/config/.e
 
 ## Production
 
-The Vercel project serves `client/` and proxies `/api/*` to the Railway API through `client/vercel.json`. The Railway project runs the Fastify API from `server/` with PostgreSQL. Set `DATABASE_URL` to the Railway Postgres service URL, `CLIENT_ORIGIN` to the exact Vercel site origin, and `COOKIE_SECURE=true`. The API uses secure, HTTP-only session cookies. Back up the PostgreSQL database separately.
+The Vercel project serves `client/` and proxies `/api/*` to the Railway API through `client/vercel.json`. The Railway project runs the Fastify API from `server/` with PostgreSQL. Set `DATABASE_URL` to the Railway Postgres service URL, `CLIENT_ORIGIN` to the exact Vercel site origin, and `COOKIE_SECURE=true`. The API uses secure, HTTP-only session cookies. Set `TRUST_PROXY_HOPS` to the number of proxies in front of the API (Railway's edge plus the Vercel rewrite) so rate limits apply to each visitor's address.
+
+The API limits requests per address (120 per minute overall, 5 sign-ups per hour, 10 data imports per minute), login attempts per address (30 per 15 minutes) and per account (10 per 15 minutes) and sign-ups across all visitors (50 per hour). Each account holds at most 500 notes, 100 tags and 5 MB of note text, and a note's content is limited to 20,000 characters. A user keeps at most 10 sessions, and expired sessions are deleted hourly. Back up the PostgreSQL database separately.
 
 For a Docker deployment, copy `.env.production.example` to `.env`, set the PostgreSQL URL and HTTPS origins, then run `docker compose -f compose.prod.yaml up --build -d`. The client image serves on localhost:8080 and the API on localhost:3001; expose both through an HTTPS reverse proxy. Set `API_URL` to that proxy's public API path or origin.

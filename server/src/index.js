@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import Fastify from 'fastify';
+import rateLimit from '@fastify/rate-limit';
 import pg from 'pg';
 import bcrypt from 'bcryptjs';
 import { randomBytes, randomUUID, createHash } from 'node:crypto';
@@ -8,8 +9,13 @@ import { readFile } from 'node:fs/promises';
 const { Pool } = pg;
 const origin = process.env.CLIENT_ORIGIN;
 if (!process.env.DATABASE_URL || !origin) throw new Error('DATABASE_URL and CLIENT_ORIGIN are required');
-const app = Fastify({ bodyLimit: 2 * 1024 * 1024 });
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+// Proxy hops in front of the server: Railway's edge adds one, and requests proxied by Vercel add another.
+// Fastify ignores a numeric trustProxy, so the hop count is passed as a function.
+const proxyHops = Number(process.env.TRUST_PROXY_HOPS ?? 1);
+const app = Fastify({ bodyLimit: 256 * 1024, logger: true, trustProxy: (address, hop) => hop < proxyHops });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: 10, connectionTimeoutMillis: 5000, idleTimeoutMillis: 30000, statement_timeout: 10000, query_timeout: 15000 });
+const LIMITS = { notes: 500, tags: 100, storageBytes: 5 * 1024 * 1024, noteContent: 20000, sessionsPerUser: 10, registrationsPerHour: 50 };
+await app.register(rateLimit, { max: 120, timeWindow: '1 minute' });
 
 app.addHook('onRequest', async (request, reply) => {
   reply.header('Cache-Control', 'no-store');
@@ -29,6 +35,8 @@ const cookie = request => (request.headers.cookie || '').split(';').map(x => x.t
 const cookieOptions = () => `HttpOnly; SameSite=Lax; Path=/; Max-Age=${60 * 60 * 24 * 30}${process.env.COOKIE_SECURE === 'true' ? '; Secure' : ''}`;
 async function issueSession(reply, user) {
   const token = randomBytes(32).toString('hex');
+  await pool.query(`DELETE FROM sessions WHERE user_id=$1 AND (expires_at <= now() OR token_hash NOT IN (
+    SELECT token_hash FROM sessions WHERE user_id=$1 AND expires_at > now() ORDER BY expires_at DESC LIMIT $2))`, [user.id, LIMITS.sessionsPerUser - 1]);
   await pool.query('INSERT INTO sessions (token_hash,user_id,expires_at) VALUES ($1,$2,now() + interval \'30 days\')', [hash(token), user.id]);
   reply.header('Set-Cookie', `notely_session=${token}; ${cookieOptions()}`);
   return { id: user.id, email: user.email };
@@ -43,7 +51,7 @@ async function auth(request, reply) {
 const uuid = value => typeof value === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value);
 const date = value => typeof value === 'string' && !Number.isNaN(Date.parse(value));
 const validTag = t => t && uuid(t.id) && typeof t.name === 'string' && t.name.trim().length >= 1 && t.name.length <= 100 && Number.isInteger(t.color) && t.color >= 0 && t.color <= 8 && typeof t.active === 'boolean' && date(t.createdAt) && date(t.updatedAt);
-const validNote = n => n && uuid(n.id) && typeof n.title === 'string' && n.title.trim().length >= 1 && n.title.length <= 200 && typeof n.content === 'string' && n.content.trim().length >= 1 && n.content.length <= 100000 && Array.isArray(n.tags) && n.tags.every(uuid) && typeof n.active === 'boolean' && date(n.createdAt) && date(n.updatedAt);
+const validNote = n => n && uuid(n.id) && typeof n.title === 'string' && n.title.trim().length >= 1 && n.title.length <= 200 && typeof n.content === 'string' && n.content.trim().length >= 1 && n.content.length <= LIMITS.noteContent && Array.isArray(n.tags) && n.tags.every(uuid) && typeof n.active === 'boolean' && date(n.createdAt) && date(n.updatedAt);
 const mapNote = row => ({ id: row.id, title: row.title, content: row.content, tags: row.tags, active: row.active, createdAt: row.created_at, updatedAt: row.updated_at });
 const mapTag = row => ({ id: row.id, name: row.name, color: row.color, active: row.active, createdAt: row.created_at, updatedAt: row.updated_at });
 async function data(userId, db = pool) {
@@ -59,6 +67,33 @@ async function saveNote(db, userId, n) {
     ON CONFLICT (id) DO UPDATE SET title=EXCLUDED.title,content=EXCLUDED.content,tags=EXCLUDED.tags,active=EXCLUDED.active,updated_at=EXCLUDED.updated_at
     WHERE notes.user_id=EXCLUDED.user_id`, [n.id,userId,n.title,n.content,n.tags,n.active,n.createdAt,n.updatedAt]);
 }
+async function withinQuota(db, userId) {
+  const { rows: [usage] } = await db.query(`SELECT
+    (SELECT count(*) FROM notes WHERE user_id=$1)::int AS notes,
+    (SELECT count(*) FROM tags WHERE user_id=$1)::int AS tags,
+    (SELECT coalesce(sum(octet_length(title) + octet_length(content)), 0) FROM notes WHERE user_id=$1)::bigint AS bytes`, [userId]);
+  return usage.notes <= LIMITS.notes && usage.tags <= LIMITS.tags && Number(usage.bytes) <= LIMITS.storageBytes;
+}
+async function saveWithinQuota(userId, notes, tags) {
+  const db = await pool.connect();
+  try {
+    await db.query('BEGIN');
+    for (const tag of tags) await saveTag(db, userId, tag);
+    for (const note of notes) await saveNote(db, userId, note);
+    if (!(await withinQuota(db, userId))) {
+      await db.query('ROLLBACK');
+      return false;
+    }
+    await db.query('COMMIT');
+    return true;
+  } catch (error) {
+    await db.query('ROLLBACK');
+    throw error;
+  } finally {
+    db.release();
+  }
+}
+const quotaMessage = `Storage limit reached: up to ${LIMITS.notes} notes, ${LIMITS.tags} tags and ${LIMITS.storageBytes / 1024 / 1024} MB per account`;
 async function saveTag(db, userId, t) {
   await db.query(`INSERT INTO tags (id,user_id,name,color,active,created_at,updated_at)
     VALUES ($1,$2,$3,$4,$5,$6,$7)
@@ -69,12 +104,14 @@ app.get('/health', async () => {
   await pool.query('SELECT 1');
   return { ok: true };
 });
-app.post('/auth/register', async (request, reply) => {
+app.post('/auth/register', { config: { rateLimit: { max: 5, timeWindow: '1 hour' } } }, async (request, reply) => {
   const email = typeof request.body?.email === 'string' ? request.body.email.trim().toLowerCase() : '';
   const password = request.body?.password;
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254 || typeof password !== 'string' || password.length < 8 || password.length > 72) {
     return fail(reply, 400, 'Enter a valid email and a password of 8–72 characters');
   }
+  const { rows: [recent] } = await pool.query("SELECT count(*)::int AS count FROM users WHERE created_at > now() - interval '1 hour'");
+  if (recent.count >= LIMITS.registrationsPerHour) return fail(reply, 503, 'Sign-ups are temporarily paused. Please try again later.');
   try {
     const passwordHash = await bcrypt.hash(password, 12);
     const { rows } = await pool.query('INSERT INTO users (id,email,password_hash) VALUES ($1,$2,$3) RETURNING id,email', [randomUUID(), email, passwordHash]);
@@ -84,10 +121,15 @@ app.post('/auth/register', async (request, reply) => {
     throw error;
   }
 });
-app.post('/auth/login', async (request, reply) => {
-  const email = typeof request.body?.email === 'string' ? request.body.email.trim().toLowerCase() : '';
+// Limited per IP and per account, so rotating IPs cannot brute-force one password.
+// The plugin runs only one limit hook per request, so the per-account limit is checked in the handler.
+const loginEmail = request => typeof request.body?.email === 'string' ? request.body.email.trim().toLowerCase() : '';
+const loginAccountLimit = app.createRateLimit({ max: 10, timeWindow: '15 minutes', keyGenerator: request => `login:${loginEmail(request)}` });
+app.post('/auth/login', { config: { rateLimit: { max: 30, timeWindow: '15 minutes' } } }, async (request, reply) => {
+  const email = loginEmail(request);
   const password = request.body?.password;
   if (!email || typeof password !== 'string') return fail(reply, 400, 'Email and password required');
+  if ((await loginAccountLimit(request)).isExceeded) return fail(reply, 429, 'Too many sign-in attempts for this account. Try again in 15 minutes.');
   const { rows } = await pool.query('SELECT * FROM users WHERE email=$1', [email]);
   if (!rows.length || !(await bcrypt.compare(password, rows[0].password_hash))) return fail(reply, 401, 'Invalid email or password');
   return { user: await issueSession(reply, rows[0]) };
@@ -99,29 +141,20 @@ app.post('/auth/logout', { preHandler: auth }, async (request, reply) => {
   return reply.code(204).send();
 });
 app.get('/data', { preHandler: auth }, async request => data(request.user.id));
-app.post('/data/import', { preHandler: auth }, async (request, reply) => {
+// Large enough for a full account quota plus JSON overhead.
+app.post('/data/import', { preHandler: auth, bodyLimit: 8 * 1024 * 1024, config: { rateLimit: { max: 10, timeWindow: '1 minute' } } }, async (request, reply) => {
   const { notes, tags } = request.body || {};
-  if (!Array.isArray(notes) || !Array.isArray(tags) || notes.length > 1000 || tags.length > 1000 || !notes.every(validNote) || !tags.every(validTag)) {
+  if (!Array.isArray(notes) || !Array.isArray(tags) || notes.length > LIMITS.notes || tags.length > LIMITS.tags || !notes.every(validNote) || !tags.every(validTag)) {
     return fail(reply, 400, 'Invalid notes or tags');
   }
-  const db = await pool.connect();
-  try {
-    await db.query('BEGIN');
-    for (const tag of tags) await saveTag(db, request.user.id, tag);
-    for (const note of notes) await saveNote(db, request.user.id, note);
-    await db.query('COMMIT');
-  } catch (error) {
-    await db.query('ROLLBACK');
-    throw error;
-  } finally {
-    db.release();
-  }
+  if (!(await saveWithinQuota(request.user.id, notes, tags))) return fail(reply, 413, quotaMessage);
   return data(request.user.id);
 });
-for (const [kind, valid, save] of [['notes', validNote, saveNote], ['tags', validTag, saveTag]]) {
+for (const [kind, valid] of [['notes', validNote], ['tags', validTag]]) {
   app.put(`/data/${kind}/:id`, { preHandler: auth }, async (request, reply) => {
     if (request.params.id !== request.body?.id || !valid(request.body)) return fail(reply, 400, 'Invalid item');
-    await save(pool, request.user.id, request.body);
+    const saved = kind === 'notes' ? await saveWithinQuota(request.user.id, [request.body], []) : await saveWithinQuota(request.user.id, [], [request.body]);
+    if (!saved) return fail(reply, 413, quotaMessage);
     return request.body;
   });
   app.delete(`/data/${kind}/:id`, { preHandler: auth }, async (request, reply) => {
@@ -137,4 +170,7 @@ app.setErrorHandler((error, request, reply) => {
 });
 app.addHook('onClose', async () => pool.end());
 await pool.query(await readFile(new URL('./schema.sql', import.meta.url), 'utf8'));
+const deleteExpiredSessions = () => pool.query('DELETE FROM sessions WHERE expires_at <= now()').catch(error => app.log.error(error));
+await deleteExpiredSessions();
+setInterval(deleteExpiredSessions, 60 * 60 * 1000).unref();
 await app.listen({ port: Number(process.env.PORT || 3000), host: '0.0.0.0' });

@@ -18,8 +18,8 @@
         </div>
         <div class="create_form__input_control">
           <label for="noteContent">Your note</label>
-          <textarea formControlName="content" name="noteContent" id="noteContent" placeholder="Write freely. You can edit this later." appTextareaAutoresize></textarea>
-          <small *ngIf="content?.invalid && (content?.dirty || content?.touched)"><ng-container *ngIf="content?.hasError('required')">A note needs some content</ng-container><ng-container *ngIf="content?.hasError('minlength')">Use at least 3 characters</ng-container></small>
+          <textarea formControlName="content" name="noteContent" id="noteContent" maxlength="20000" placeholder="Write freely. You can edit this later." appTextareaAutoresize></textarea>
+          <small *ngIf="content?.invalid && (content?.dirty || content?.touched)"><ng-container *ngIf="content?.hasError('required')">A note needs some content</ng-container><ng-container *ngIf="content?.hasError('minlength')">Use at least 3 characters</ng-container><ng-container *ngIf="content?.hasError('maxlength')">Use no more than 20,000 characters</ng-container></small>
         </div>
         <div class="create_form__tags_container">
           <h2>Organize with tags <span>Optional</span></h2>

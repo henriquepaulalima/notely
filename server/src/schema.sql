@@ -31,3 +31,5 @@ CREATE TABLE IF NOT EXISTS notes (
 CREATE INDEX IF NOT EXISTS notes_user_id_idx ON notes(user_id);
 CREATE INDEX IF NOT EXISTS tags_user_id_idx ON tags(user_id);
 CREATE INDEX IF NOT EXISTS sessions_user_id_idx ON sessions(user_id);
+CREATE INDEX IF NOT EXISTS sessions_expires_at_idx ON sessions(expires_at);
+CREATE INDEX IF NOT EXISTS users_created_at_idx ON users(created_at);

@@ -104,10 +104,10 @@ export class ManageModalComponent implements OnInit, OnDestroy {
           this.noteData.title,
           Validators.required,
         ),
-        content: new FormControl<string>(
-          this.noteData.content,
+        content: new FormControl<string>(this.noteData.content, [
           Validators.required,
-        ),
+          Validators.maxLength(20000),
+        ]),
       });
 
       this.initialFormData = this.noteForm.value;
@@ -207,7 +207,7 @@ export class ManageModalComponent implements OnInit, OnDestroy {
         this.notificationService.createNewNotification({
           id: uuidv4(),
           type: NotificationType.ERROR,
-          message: 'Could not edit tag',
+          message: (error as any)?.error?.error || 'Could not edit tag',
         });
       }
     } else {
@@ -237,7 +237,7 @@ export class ManageModalComponent implements OnInit, OnDestroy {
         this.notificationService.createNewNotification({
           id: uuidv4(),
           type: NotificationType.ERROR,
-          message: 'Could not edit note',
+          message: (error as any)?.error?.error || 'Could not edit note',
         });
       }
     }

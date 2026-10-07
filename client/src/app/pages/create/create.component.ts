@@ -79,6 +79,7 @@ export class CreateComponent implements OnInit {
       content: new FormControl<string>('', [
         Validators.required,
         Validators.minLength(3),
+        Validators.maxLength(20000),
       ]),
     });
 
@@ -150,8 +151,8 @@ export class CreateComponent implements OnInit {
       await this.noteService.createNote(note);
       this.clearForm(this.noteForm);
       this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New note created' });
-    } catch {
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not save note. Please try again.' });
+    } catch (error: any) {
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: error?.error?.error || 'Could not save note. Please try again.' });
     }
   }
 
@@ -178,8 +179,8 @@ export class CreateComponent implements OnInit {
       this.clearForm(this.tagForm);
       this.tags = this.tagService.getAllTags();
       this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.SUCCESS, message: 'New tag created' });
-    } catch {
-      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: 'Could not save tag. Please try again.' });
+    } catch (error: any) {
+      this.notificationService.createNewNotification({ id: uuidv4(), type: NotificationType.ERROR, message: error?.error?.error || 'Could not save tag. Please try again.' });
     }
   }
 
